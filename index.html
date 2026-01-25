@@ -62,6 +62,50 @@
     font-weight: bold;
     color: #333;
   }
+
+    body.dark {
+  background: linear-gradient(120deg, #121212, #1e1e1e);
+  color: #f1f1f1;
+}
+
+body.dark .entry {
+  background: #1f1f1f;
+  box-shadow: 0 8px 20px rgba(255,255,255,0.05);
+}
+
+body.dark input {
+  background: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+
+body.dark button {
+  background: #6a8cff;
+}
+
+body.dark p {
+  color: #bbb;
+}
+
+body.dark h1,
+body.dark .label {
+  color: #f5f5f5;
+}
+
+input:focus {
+  border-color: #4f7cff;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(120deg, #f2f6ff, #ffffff);
+  padding: 40px;
+  max-width: 760px;
+  margin: auto;
+  color: #222;
+  transition: background 0.4s, color 0.4s;
+}
+
 </style>
 </head>
 
@@ -71,6 +115,28 @@
 
   <input id="search" placeholder="Type an English word..." />
   <button onclick="searchWord()">Search</button>
+  <button onclick="toggleSettings()" style="margin-left:10px;">⚙️ Settings</button>
+
+<div id="settings" style="display:none; margin-top:20px;">
+  <label>
+    🌙 Dark mode
+    <input type="checkbox" onchange="toggleDarkMode(this.checked)">
+  </label>
+  <br><br>
+
+  <label>
+    🔆 Contrast
+    <input type="range" min="90" max="130" value="100"
+           onchange="setContrast(this.value)">
+  </label>
+  <br><br>
+
+  <label>
+    🔠 Text size
+    <input type="range" min="14" max="22" value="16"
+           onchange="setTextSize(this.value)">
+  </label>
+</div>
 
   <div id="result"></div>
 
@@ -143,5 +209,39 @@
       }
     }
   </script>
+  function toggleSettings() {
+  const panel = document.getElementById("settings");
+  panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
+
+// Dark mode
+function toggleDarkMode(enabled) {
+  document.body.classList.toggle("dark", enabled);
+  localStorage.setItem("darkMode", enabled);
+}
+
+// Contrast
+function setContrast(value) {
+  document.body.style.filter = `contrast(${value}%)`;
+  localStorage.setItem("contrast", value);
+}
+
+// Text size
+function setTextSize(value) {
+  document.body.style.fontSize = value + "px";
+  localStorage.setItem("textSize", value);
+}
+
+// Restore settings on load
+window.onload = () => {
+  const dark = localStorage.getItem("darkMode") === "true";
+  const contrast = localStorage.getItem("contrast") || 100;
+  const textSize = localStorage.getItem("textSize") || 16;
+
+  document.body.classList.toggle("dark", dark);
+  document.body.style.filter = `contrast(${contrast}%)`;
+  document.body.style.fontSize = textSize + "px";
+};
+
 </body>
 </html>
