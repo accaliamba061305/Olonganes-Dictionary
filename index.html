@@ -61,4 +61,61 @@
       {
         english: "goodbye",
         olonganes: "blyenata",
-        de
+        definition:
+          "A farewell expression employed in both formal and informal registers, typically marking a temporary separation rather than permanent departure. It pragmatically implies an expectation of subsequent reunion.",
+        synonyms: "Blyeneti, Blavra, Bleva, Phandias",
+        example: "Blyenata! Metep schkol. (Bye! See you again / Meet soon.)"
+      },
+      {
+        english: "i",
+        olonganes: "miy",
+        definition:
+          "A first-person singular subject pronoun denoting the speaker as the agent or experiencer within a clause. It encodes self-reference in declarative, emotive, and intentional constructions.",
+        synonyms: "Miyla, Misi",
+        example: "Miy sontu khluppi. (I am happy.)"
+      }
+    ];
+
+    function searchWord() {
+      const input = document.getElementById("search").value
+        .toLowerCase()
+        .trim();
+
+      const result = dictionary.find(
+        d => d.english.toLowerCase() === input
+      );
+
+      if (result) {
+        document.getElementById("result").innerHTML = `
+          <div class="entry">
+            <h2>${result.olonganes}</h2>
+
+            <p>
+              <span class="label">English keyword:</span>
+              ${result.english}
+            </p>
+
+            <p>
+              <span class="label">Definition:</span>
+              ${result.definition}
+            </p>
+
+            <p>
+              <span class="label">Variations & Synonyms:</span>
+              ${result.synonyms}
+            </p>
+
+            <p>
+              <span class="label">Example:</span>
+              ${result.example}
+            </p>
+          </div>
+        `;
+      } else {
+        document.getElementById("result").innerHTML =
+          "<p>❌ Word not found.</p>";
+      }
+    }
+  </script>
+</body>
+</html>
