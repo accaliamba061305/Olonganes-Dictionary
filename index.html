@@ -10,7 +10,7 @@
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(120deg, #f2f6ff, #ffffff);
-  padding: 30px;
+  padding: 40px;
   max-width: 760px;
   margin: auto;
   color: #222;
@@ -19,6 +19,7 @@ body {
 
 h1 {
   text-align: center;
+  letter-spacing: 1px;
 }
 
 p {
@@ -37,6 +38,7 @@ input {
 
 input:focus {
   border-color: #4f7cff;
+  box-shadow: 0 0 0 2px rgba(79,124,255,0.2);
 }
 
 /* ================= BUTTON ================= */
@@ -49,19 +51,14 @@ button {
   background: linear-gradient(135deg, #5f8cff, #3f6cff);
   color: white;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
   box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
 button:hover {
-  transform: translateY(-2px);
+  filter: brightness(1.08);
 }
 
-button:active {
-  transform: scale(0.96);
-}
-
-/* ================= RESULT ================= */
+/* ================= RESULT CARD ================= */
 
 #result {
   margin-top: 30px;
@@ -72,54 +69,17 @@ button:active {
   border-radius: 14px;
   padding: 24px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-  animation: fadeIn 0.3s ease;
 }
 
 .label {
   font-weight: bold;
+  color: #333;
 }
 
-/* ================= ANIMATION ================= */
+/* ================= SETTINGS PANEL ================= */
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ================= SETTINGS ================= */
-
-.settings-button {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 1000;
-}
-
-.settings-panel {
-  position: fixed;
-  top: 70px;
-  right: 16px;
-  width: 260px;
-  background: white;
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-  display: none;
-}
-
-.settings-title {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 12px;
-}
-
-.settings-option {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.back-button {
-  background: #999;
+#settings {
+  margin-top: 20px;
 }
 
 /* ================= TEXT SIZE ================= */
@@ -132,178 +92,154 @@ body.text-very-large {
   font-size: 22px;
 }
 
-/* ================= CONTRAST ================= */
+/* ================= CONTRAST MODES ================= */
 
+/* White on Black */
 body.contrast-wob {
   background: #000;
   color: #fff;
 }
 
+body.contrast-wob .entry {
+  background: #111;
+}
+
+/* Black on White */
 body.contrast-bow {
   background: #fff;
   color: #000;
 }
 
-body.contrast-boy {
-  background: #ffeb3b;
-  color: #000;
+body.contrast-bow .entry {
+  background: #f5f5f5;
 }
 
-/* ================= DARK MODE ================= */
-
-body.dark {
-  background: #121212;
-  color: #f1f1f1;
+/* Yellow on Black  ✅ (fixed) */
+body.contrast-yob {
+  background: #000;
+  color: #ffeb3b;
 }
 
-body.dark .entry,
-body.dark .settings-panel {
-  background: #1f1f1f;
+body.contrast-yob .entry {
+  background: #111;
 }
   </style>
 </head>
 
 <body>
+  <h1>English–Olonganes Dictionary</h1>
+  <p>A personal constructed-language dictionary.</p>
 
-<h1>English–Olonganes Dictionary</h1>
-<p>A personal constructed-language dictionary.</p>
+  <input id="search" placeholder="Type an English word..." />
+  <button onclick="searchWord()">Search</button>
+  <button onclick="toggleSettings()" style="margin-left:10px;">⚙️ Settings</button>
 
-<input id="search" placeholder="Type an English word..." />
-<button onclick="searchWord()">Search</button>
+  <div id="settings" style="display:none;">
+    <label>
+      🎨 Contrast mode:
+      <select onchange="setContrastMode(this.value)">
+        <option value="">Normal</option>
+        <option value="contrast-wob">White on Black</option>
+        <option value="contrast-bow">Black on White</option>
+        <option value="contrast-yob">Yellow on Black</option>
+      </select>
+    </label>
 
-<button class="settings-button" onclick="openSettings()">⚙️</button>
+    <br><br>
 
-<div id="result"></div>
-
-<!-- SETTINGS PANEL -->
-<div id="settings" class="settings-panel">
-
-  <!-- MAIN MENU -->
-  <div id="menu-main">
-    <div class="settings-title">Settings</div>
-    <button class="settings-option" onclick="openContrast()">Contrast</button>
-    <button class="settings-option" onclick="openTextSize()">Text Size</button>
-    <button class="settings-option" onclick="toggleDark()">Dark Mode</button>
+    <label>
+      🔠 Text size
+      <input type="range" min="14" max="22" value="16"
+             onchange="setTextSize(this.value)">
+    </label>
   </div>
 
-  <!-- CONTRAST MENU -->
-  <div id="menu-contrast" style="display:none;">
-    <div class="settings-title">Contrast</div>
-    <button class="settings-option" onclick="setContrast('wob')">White on Black</button>
-    <button class="settings-option" onclick="setContrast('bow')">Black on White</button>
-    <button class="settings-option" onclick="setContrast('boy')">Black on Yellow</button>
-    <button class="settings-option back-button" onclick="backMain()">Back</button>
-  </div>
+  <div id="result"></div>
 
-  <!-- TEXT SIZE MENU -->
-  <div id="menu-text" style="display:none;">
-    <div class="settings-title">Text Size</div>
-    <button class="settings-option" onclick="setText('normal')">Standard</button>
-    <button class="settings-option" onclick="setText('large')">Large</button>
-    <button class="settings-option" onclick="setText('very-large')">Very Large</button>
-    <button class="settings-option back-button" onclick="backMain()">Back</button>
-  </div>
-
-</div>
-
-<script>
-/* ================= DICTIONARY ================= */
-
+  <script>
 const dictionary = [
   {
     english: "hello",
-    olonganes: "Sturelik",
-    definition: "A universal greeting used across both formal and informal contexts, functioning as a social opener and marker of polite engagement.",
+    olonganes: "sturelik",
+    definition:
+      "A universal greeting in Olonganes, applicable across both formal and informal social contexts.",
     synonyms: "Bogoda, Stu, Sturelikaniy",
     example: "Sturelik! Kome sontu vera? (Hello! How are you?)"
   },
   {
     english: "goodbye",
-    olonganes: "Blyenata",
-    definition: "A farewell expression indicating temporary separation rather than permanent departure.",
+    olonganes: "blyenata",
+    definition:
+      "A farewell expression used for temporary separation.",
     synonyms: "Blyeneti, Blavra, Bleva, Phandias",
     example: "Blyenata! Metep schkol. (Bye! See you again.)"
   },
   {
     english: "i",
-    olonganes: "Miy",
-    definition: "First-person singular subject pronoun used for self-reference.",
+    olonganes: "miy",
+    definition:
+      "First-person singular subject pronoun.",
     synonyms: "Miyla, Misi",
     example: "Miy sontu khluppi. (I am happy.)"
   }
 ];
 
-/* ================= SEARCH ================= */
-
 function searchWord() {
-  const input = document.getElementById("search").value.trim().toLowerCase();
-  const result = dictionary.find(d => d.english === input);
+  const input = document.getElementById("search").value
+    .toLowerCase()
+    .trim();
 
-  if (!result) {
-    document.getElementById("result").innerHTML = "<p>❌ Word not found.</p>";
-    return;
+  const result = dictionary.find(
+    d => d.english.toLowerCase() === input
+  );
+
+  if (result) {
+    document.getElementById("result").innerHTML = `
+      <div class="entry">
+        <h2>${result.olonganes}</h2>
+        <p><span class="label">English:</span> ${result.english}</p>
+        <p><span class="label">Definition:</span> ${result.definition}</p>
+        <p><span class="label">Synonyms:</span> ${result.synonyms}</p>
+        <p><span class="label">Example:</span> ${result.example}</p>
+      </div>
+    `;
+  } else {
+    document.getElementById("result").innerHTML =
+      "<p>❌ Word not found.</p>";
   }
-
-  document.getElementById("result").innerHTML = `
-    <div class="entry">
-      <h2>${result.olonganes}</h2>
-      <p><span class="label">English:</span> ${result.english}</p>
-      <p><span class="label">Definition:</span> ${result.definition}</p>
-      <p><span class="label">Synonyms:</span> ${result.synonyms}</p>
-      <p><span class="label">Example:</span> ${result.example}</p>
-    </div>
-  `;
 }
 
+function toggleSettings() {
+  const panel = document.getElementById("settings");
+  panel.style.display =
+    panel.style.display === "none" ? "block" : "none";
+}
+
+/* Contrast mode */
+function setContrastMode(mode) {
+  document.body.className = mode;
+  localStorage.setItem("contrastMode", mode);
+}
+
+/* Text size */
+function setTextSize(value) {
+  document.body.style.fontSize = value + "px";
+  localStorage.setItem("textSize", value);
+}
+
+/* Restore settings */
+window.onload = () => {
+  const contrastMode = localStorage.getItem("contrastMode") || "";
+  const textSize = localStorage.getItem("textSize") || 16;
+
+  document.body.className = contrastMode;
+  document.body.style.fontSize = textSize + "px";
+};
+
+/* Enter key to search */
 document.getElementById("search").addEventListener("keydown", e => {
   if (e.key === "Enter") searchWord();
 });
-
-/* ================= SETTINGS LOGIC ================= */
-
-const panel = document.getElementById("settings");
-const mainMenu = document.getElementById("menu-main");
-const contrastMenu = document.getElementById("menu-contrast");
-const textMenu = document.getElementById("menu-text");
-
-function openSettings() {
-  panel.style.display = panel.style.display === "block" ? "none" : "block";
-  backMain();
-}
-
-function openContrast() {
-  mainMenu.style.display = "none";
-  contrastMenu.style.display = "block";
-}
-
-function openTextSize() {
-  mainMenu.style.display = "none";
-  textMenu.style.display = "block";
-}
-
-function backMain() {
-  mainMenu.style.display = "block";
-  contrastMenu.style.display = "none";
-  textMenu.style.display = "none";
-}
-
-/* ================= FEATURES ================= */
-
-function toggleDark() {
-  document.body.classList.toggle("dark");
-}
-
-function setContrast(mode) {
-  document.body.classList.remove("contrast-wob","contrast-bow","contrast-boy");
-  document.body.classList.add("contrast-" + mode);
-}
-
-function setText(size) {
-  document.body.classList.remove("text-large","text-very-large");
-  if (size === "large") document.body.classList.add("text-large");
-  if (size === "very-large") document.body.classList.add("text-very-large");
-}
-</script>
-
+  </script>
 </body>
 </html>
