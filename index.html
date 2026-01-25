@@ -3,110 +3,102 @@
 <head>
   <title>English–Olonganes Dictionary</title>
   <meta charset="UTF-8">
+
   <style>
-  body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(120deg, #f2f6ff, #ffffff);
-    padding: 40px;
-    max-width: 760px;
-    margin: auto;
-    color: #222;
-  }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(120deg, #f2f6ff, #ffffff);
+      padding: 40px;
+      max-width: 760px;
+      margin: auto;
+      color: #222;
+      transition: background 0.4s, color 0.4s;
+    }
 
-  h1 {
-    text-align: center;
-    letter-spacing: 1px;
-  }
+    h1 {
+      text-align: center;
+      letter-spacing: 1px;
+    }
 
-  p {
-    text-align: center;
-    color: #555;
-  }
+    p {
+      text-align: center;
+      color: #555;
+    }
 
-  input {
-    padding: 12px;
-    width: 65%;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    outline: none;
-  }
+    input {
+      padding: 12px;
+      width: 65%;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
 
-  button {
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: none;
-    background: #4f7cff;
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
-  }
+    input:focus {
+      border-color: #4f7cff;
+    }
 
-  button:hover {
-    background: #3a63e0;
-  }
+    button {
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background: #4f7cff;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-  #result {
-    margin-top: 30px;
-  }
+    button:hover {
+      background: #3a63e0;
+    }
 
-  .entry {
-    background: white;
-    border-radius: 12px;
-    padding: 22px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  }
+    #result {
+      margin-top: 30px;
+    }
 
-  .label {
-    font-weight: bold;
-    color: #333;
-  }
+    .entry {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
 
+    .label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Dark mode */
     body.dark {
-  background: linear-gradient(120deg, #121212, #1e1e1e);
-  color: #f1f1f1;
-}
+      background: linear-gradient(120deg, #121212, #1e1e1e);
+      color: #f1f1f1;
+    }
 
-body.dark .entry {
-  background: #1f1f1f;
-  box-shadow: 0 8px 20px rgba(255,255,255,0.05);
-}
+    body.dark .entry {
+      background: #1f1f1f;
+      box-shadow: 0 8px 20px rgba(255,255,255,0.05);
+    }
 
-body.dark input {
-  background: #2a2a2a;
-  color: white;
-  border: 1px solid #444;
-}
+    body.dark input {
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #444;
+    }
 
-body.dark button {
-  background: #6a8cff;
-}
+    body.dark button {
+      background: #6a8cff;
+    }
 
-body.dark p {
-  color: #bbb;
-}
+    body.dark p {
+      color: #bbb;
+    }
 
-body.dark h1,
-body.dark .label {
-  color: #f5f5f5;
-}
-
-input:focus {
-  border-color: #4f7cff;
-}
-
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(120deg, #f2f6ff, #ffffff);
-  padding: 40px;
-  max-width: 760px;
-  margin: auto;
-  color: #222;
-  transition: background 0.4s, color 0.4s;
-}
-
-</style>
+    body.dark h1,
+    body.dark .label {
+      color: #f5f5f5;
+    }
+  </style>
 </head>
 
 <body>
@@ -117,26 +109,26 @@ body {
   <button onclick="searchWord()">Search</button>
   <button onclick="toggleSettings()" style="margin-left:10px;">⚙️ Settings</button>
 
-<div id="settings" style="display:none; margin-top:20px;">
-  <label>
-    🌙 Dark mode
-    <input type="checkbox" onchange="toggleDarkMode(this.checked)">
-  </label>
-  <br><br>
+  <div id="settings" style="display:none; margin-top:20px;">
+    <label>
+      🌙 Dark mode
+      <input type="checkbox" onchange="toggleDarkMode(this.checked)">
+    </label>
+    <br><br>
 
-  <label>
-    🔆 Contrast
-    <input type="range" min="90" max="130" value="100"
-           onchange="setContrast(this.value)">
-  </label>
-  <br><br>
+    <label>
+      🔆 Contrast
+      <input type="range" min="90" max="130" value="100"
+             onchange="setContrast(this.value)">
+    </label>
+    <br><br>
 
-  <label>
-    🔠 Text size
-    <input type="range" min="14" max="22" value="16"
-           onchange="setTextSize(this.value)">
-  </label>
-</div>
+    <label>
+      🔠 Text size
+      <input type="range" min="14" max="22" value="16"
+             onchange="setTextSize(this.value)">
+    </label>
+  </div>
 
   <div id="result"></div>
 
@@ -146,7 +138,7 @@ body {
         english: "hello",
         olonganes: "sturelik",
         definition:
-          "A universal greeting in Olonganes, applicable across both formal and informal social contexts. It functions as a neutral discourse opener, signaling social acknowledgment, politeness, and communicative engagement.",
+          "A universal greeting in Olonganes, applicable across both formal and informal social contexts.",
         synonyms: "Bogoda, Stu, Sturelikaniy",
         example: "Sturelik! Kome sontu vera? (Hello! How are you?)"
       },
@@ -154,15 +146,15 @@ body {
         english: "goodbye",
         olonganes: "blyenata",
         definition:
-          "A farewell expression employed in both formal and informal registers, typically marking a temporary separation rather than permanent departure. It pragmatically implies an expectation of subsequent reunion.",
+          "A farewell expression used for temporary separation.",
         synonyms: "Blyeneti, Blavra, Bleva, Phandias",
-        example: "Blyenata! Metep schkol. (Bye! See you again / Meet soon.)"
+        example: "Blyenata! Metep schkol. (Bye! See you again.)"
       },
       {
         english: "i",
         olonganes: "miy",
         definition:
-          "A first-person singular subject pronoun denoting the speaker as the agent or experiencer within a clause. It encodes self-reference in declarative, emotive, and intentional constructions.",
+          "First-person singular subject pronoun.",
         synonyms: "Miyla, Misi",
         example: "Miy sontu khluppi. (I am happy.)"
       }
@@ -181,26 +173,10 @@ body {
         document.getElementById("result").innerHTML = `
           <div class="entry">
             <h2>${result.olonganes}</h2>
-
-            <p>
-              <span class="label">English keyword:</span>
-              ${result.english}
-            </p>
-
-            <p>
-              <span class="label">Definition:</span>
-              ${result.definition}
-            </p>
-
-            <p>
-              <span class="label">Variations & Synonyms:</span>
-              ${result.synonyms}
-            </p>
-
-            <p>
-              <span class="label">Example:</span>
-              ${result.example}
-            </p>
+            <p><span class="label">English:</span> ${result.english}</p>
+            <p><span class="label">Definition:</span> ${result.definition}</p>
+            <p><span class="label">Synonyms:</span> ${result.synonyms}</p>
+            <p><span class="label">Example:</span> ${result.example}</p>
           </div>
         `;
       } else {
@@ -208,40 +184,43 @@ body {
           "<p>❌ Word not found.</p>";
       }
     }
+
+    function toggleSettings() {
+      const panel = document.getElementById("settings");
+      panel.style.display =
+        panel.style.display === "none" ? "block" : "none";
+    }
+
+    function toggleDarkMode(enabled) {
+      document.body.classList.toggle("dark", enabled);
+      localStorage.setItem("darkMode", enabled);
+    }
+
+    function setContrast(value) {
+      document.body.style.filter = `contrast(${value}%)`;
+      localStorage.setItem("contrast", value);
+    }
+
+    function setTextSize(value) {
+      document.body.style.fontSize = value + "px";
+      localStorage.setItem("textSize", value);
+    }
+
+    // Restore settings on load
+    window.onload = () => {
+      const dark = localStorage.getItem("darkMode") === "true";
+      const contrast = localStorage.getItem("contrast") || 100;
+      const textSize = localStorage.getItem("textSize") || 16;
+
+      document.body.classList.toggle("dark", dark);
+      document.body.style.filter = `contrast(${contrast}%)`;
+      document.body.style.fontSize = textSize + "px";
+    };
+
+    // Enter key to search
+    document.getElementById("search").addEventListener("keydown", e => {
+      if (e.key === "Enter") searchWord();
+    });
   </script>
-  function toggleSettings() {
-  const panel = document.getElementById("settings");
-  panel.style.display = panel.style.display === "none" ? "block" : "none";
-}
-
-// Dark mode
-function toggleDarkMode(enabled) {
-  document.body.classList.toggle("dark", enabled);
-  localStorage.setItem("darkMode", enabled);
-}
-
-// Contrast
-function setContrast(value) {
-  document.body.style.filter = `contrast(${value}%)`;
-  localStorage.setItem("contrast", value);
-}
-
-// Text size
-function setTextSize(value) {
-  document.body.style.fontSize = value + "px";
-  localStorage.setItem("textSize", value);
-}
-
-// Restore settings on load
-window.onload = () => {
-  const dark = localStorage.getItem("darkMode") === "true";
-  const contrast = localStorage.getItem("contrast") || 100;
-  const textSize = localStorage.getItem("textSize") || 16;
-
-  document.body.classList.toggle("dark", dark);
-  document.body.style.filter = `contrast(${contrast}%)`;
-  document.body.style.fontSize = textSize + "px";
-};
-
 </body>
 </html>
