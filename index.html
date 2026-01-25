@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>English–Olonganes Dictionary</title>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<title>English–Olonganes Dictionary</title>
 
-  <style>
-/* ================= BASE ================= */
+<style>
+/* ============ BASE ============ */
 
 body {
   font-family: "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(120deg, #f2f6ff, #ffffff);
+  background: #ffffff;
+  color: #111;
   padding: 40px;
   max-width: 760px;
   margin: auto;
-  color: #222;
-  transition: background 0.4s ease, color 0.4s ease, font-size 0.3s ease;
+  transition: 0.3s ease;
 }
 
 h1 {
   text-align: center;
-  letter-spacing: 1px;
 }
 
 p {
   text-align: center;
-  color: #555;
+  color: #444;
 }
 
 input {
@@ -33,15 +32,24 @@ input {
   font-size: 16px;
   border-radius: 10px;
   border: 1px solid #ccc;
-  outline: none;
 }
 
-input:focus {
-  border-color: #4f7cff;
-  box-shadow: 0 0 0 2px rgba(79,124,255,0.2);
+#result {
+  margin-top: 30px;
 }
 
-/* ================= BUTTON ================= */
+.entry {
+  background: #f6f6f6;
+  padding: 22px;
+  border-radius: 12px;
+  animation: fadeIn 0.25s ease;
+}
+
+.label {
+  font-weight: bold;
+}
+
+/* ============ BUTTON ============ */
 
 button {
   padding: 12px 16px;
@@ -51,195 +59,229 @@ button {
   background: linear-gradient(135deg, #5f8cff, #3f6cff);
   color: white;
   cursor: pointer;
+  transition: 0.15s;
   box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
 button:hover {
-  filter: brightness(1.08);
+  transform: translateY(-2px);
 }
 
-/* ================= RESULT CARD ================= */
-
-#result {
-  margin-top: 30px;
+button:active {
+  transform: translateY(1px) scale(0.97);
 }
 
-.entry {
-  background: white;
+/* ============ SETTINGS BUTTON ============ */
+
+.settings-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+
+/* ============ SETTINGS PANEL ============ */
+
+.panel {
+  position: fixed;
+  top: 70px;
+  right: 16px;
+  width: 260px;
+  background: #ffffff;
+  padding: 18px;
   border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  display: none;
 }
 
-.label {
-  font-weight: bold;
-  color: #333;
+.panel h3 {
+  text-align: center;
 }
 
-/* ================= SETTINGS PANEL ================= */
-
-#settings {
-  margin-top: 20px;
+.panel button {
+  width: 100%;
+  margin-top: 10px;
 }
 
-/* ================= TEXT SIZE ================= */
+/* ============ TEXT SIZE ============ */
 
-body.text-large {
-  font-size: 18px;
+body.size-standard { font-size: 16px; }
+body.size-large { font-size: 20px; }
+body.size-very-large { font-size: 24px; }
+
+/* ============ CONTRAST ============ */
+
+/* Black on White */
+body.contrast-bow {
+  background: #ffffff;
+  color: #000;
 }
-
-body.text-very-large {
-  font-size: 22px;
-}
-
-/* ================= CONTRAST MODES ================= */
 
 /* White on Black */
 body.contrast-wob {
-  background: #000;
-  color: #fff;
+  background: #000000;
+  color: #ffffff;
 }
 
 body.contrast-wob .entry {
   background: #111;
 }
 
-/* Black on White */
-body.contrast-bow {
-  background: #fff;
-  color: #000;
-}
-
-body.contrast-bow .entry {
-  background: #f5f5f5;
-}
-
-/* Yellow on Black  ✅ (fixed) */
+/* Yellow on Black */
 body.contrast-yob {
-  background: #000;
+  background: #000000;
   color: #ffeb3b;
 }
 
 body.contrast-yob .entry {
   background: #111;
 }
-  </style>
+
+/* ============ ANIMATION ============ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
 </head>
 
 <body>
-  <h1>English–Olonganes Dictionary</h1>
-  <p>A personal constructed-language dictionary.</p>
 
-  <input id="search" placeholder="Type an English word..." />
-  <button onclick="searchWord()">Search</button>
-  <button onclick="toggleSettings()" style="margin-left:10px;">⚙️ Settings</button>
+<h1>English–Olonganes Dictionary</h1>
+<p>A personal constructed-language dictionary.</p>
 
-  <div id="settings" style="display:none;">
-    <label>
-      🎨 Contrast mode:
-      <select onchange="setContrastMode(this.value)">
-        <option value="">Normal</option>
-        <option value="contrast-wob">White on Black</option>
-        <option value="contrast-bow">Black on White</option>
-        <option value="contrast-yob">Yellow on Black</option>
-      </select>
-    </label>
+<input id="search" placeholder="Type an English word...">
+<button onclick="searchWord()">Search</button>
 
-    <br><br>
+<button class="settings-button" onclick="openMainSettings()">⚙️</button>
 
-    <label>
-      🔠 Text size
-      <input type="range" min="14" max="22" value="16"
-             onchange="setTextSize(this.value)">
-    </label>
-  </div>
+<!-- SETTINGS MAIN -->
+<div id="settingsMain" class="panel">
+  <h3>Settings</h3>
+  <button onclick="openContrast()">🎨 Contrast</button>
+  <button onclick="openTextSize()">🔠 Text Size</button>
+</div>
 
-  <div id="result"></div>
+<!-- CONTRAST PANEL -->
+<div id="contrastPanel" class="panel">
+  <h3>Contrast</h3>
+  <button onclick="setContrast('contrast-bow')">Black on White</button>
+  <button onclick="setContrast('contrast-wob')">White on Black</button>
+  <button onclick="setContrast('contrast-yob')">Yellow on Black</button>
+  <button onclick="back()">⬅ Back</button>
+</div>
 
-  <script>
+<!-- TEXT SIZE PANEL -->
+<div id="textPanel" class="panel">
+  <h3>Text Size</h3>
+  <button onclick="setSize('size-standard')">Standard</button>
+  <button onclick="setSize('size-large')">Large</button>
+  <button onclick="setSize('size-very-large')">Very Large</button>
+  <button onclick="back()">⬅ Back</button>
+</div>
+
+<div id="result"></div>
+
+<script>
 const dictionary = [
   {
     english: "hello",
     olonganes: "sturelik",
-    definition:
-      "A universal greeting in Olonganes, applicable across both formal and informal social contexts.",
+    definition: "A universal greeting used in both formal and informal contexts.",
     synonyms: "Bogoda, Stu, Sturelikaniy",
-    example: "Sturelik! Kome sontu vera? (Hello! How are you?)"
+    example: "Sturelik! Kome sontu vera?"
   },
   {
     english: "goodbye",
     olonganes: "blyenata",
-    definition:
-      "A farewell expression used for temporary separation.",
+    definition: "A short-term farewell expression.",
     synonyms: "Blyeneti, Blavra, Bleva, Phandias",
-    example: "Blyenata! Metep schkol. (Bye! See you again.)"
+    example: "Blyenata! Metep schkol."
   },
   {
     english: "i",
     olonganes: "miy",
-    definition:
-      "First-person singular subject pronoun.",
+    definition: "First-person singular subject pronoun.",
     synonyms: "Miyla, Misi",
-    example: "Miy sontu khluppi. (I am happy.)"
+    example: "Miy sontu khluppi."
   }
 ];
 
+/* SEARCH */
 function searchWord() {
-  const input = document.getElementById("search").value
-    .toLowerCase()
-    .trim();
+  const input = document.getElementById("search").value.trim().toLowerCase();
+  const word = dictionary.find(w => w.english === input);
 
-  const result = dictionary.find(
-    d => d.english.toLowerCase() === input
-  );
-
-  if (result) {
-    document.getElementById("result").innerHTML = `
-      <div class="entry">
-        <h2>${result.olonganes}</h2>
-        <p><span class="label">English:</span> ${result.english}</p>
-        <p><span class="label">Definition:</span> ${result.definition}</p>
-        <p><span class="label">Synonyms:</span> ${result.synonyms}</p>
-        <p><span class="label">Example:</span> ${result.example}</p>
-      </div>
-    `;
-  } else {
-    document.getElementById("result").innerHTML =
-      "<p>❌ Word not found.</p>";
-  }
+  document.getElementById("result").innerHTML = word
+    ? `<div class="entry">
+        <h2>${word.olonganes}</h2>
+        <p><b>English:</b> ${word.english}</p>
+        <p><b>Definition:</b> ${word.definition}</p>
+        <p><b>Synonyms:</b> ${word.synonyms}</p>
+        <p><b>Example:</b> ${word.example}</p>
+      </div>`
+    : "<p>❌ Word not found.</p>";
 }
 
-function toggleSettings() {
-  const panel = document.getElementById("settings");
-  panel.style.display =
-    panel.style.display === "none" ? "block" : "none";
+/* SETTINGS NAVIGATION */
+function openMainSettings() {
+  hideAllPanels();
+  toggle("settingsMain");
 }
 
-/* Contrast mode */
-function setContrastMode(mode) {
-  document.body.className = mode;
-  localStorage.setItem("contrastMode", mode);
+function openContrast() {
+  hideAllPanels();
+  show("contrastPanel");
 }
 
-/* Text size */
-function setTextSize(value) {
-  document.body.style.fontSize = value + "px";
-  localStorage.setItem("textSize", value);
+function openTextSize() {
+  hideAllPanels();
+  show("textPanel");
 }
 
-/* Restore settings */
+function back() {
+  hideAllPanels();
+  show("settingsMain");
+}
+
+function hideAllPanels() {
+  document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
+}
+
+function show(id) {
+  document.getElementById(id).style.display = "block";
+}
+
+function toggle(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
+/* SETTINGS ACTIONS */
+function setContrast(mode) {
+  document.body.classList.remove("contrast-bow","contrast-wob","contrast-yob");
+  document.body.classList.add(mode);
+  localStorage.setItem("contrast", mode);
+}
+
+function setSize(size) {
+  document.body.classList.remove("size-standard","size-large","size-very-large");
+  document.body.classList.add(size);
+  localStorage.setItem("size", size);
+}
+
+/* RESTORE SETTINGS */
 window.onload = () => {
-  const contrastMode = localStorage.getItem("contrastMode") || "";
-  const textSize = localStorage.getItem("textSize") || 16;
-
-  document.body.className = contrastMode;
-  document.body.style.fontSize = textSize + "px";
+  setContrast(localStorage.getItem("contrast") || "contrast-bow");
+  setSize(localStorage.getItem("size") || "size-standard");
 };
 
-/* Enter key to search */
+/* ENTER TO SEARCH */
 document.getElementById("search").addEventListener("keydown", e => {
   if (e.key === "Enter") searchWord();
 });
-  </script>
+</script>
+
 </body>
 </html>
