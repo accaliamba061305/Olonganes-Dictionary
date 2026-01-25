@@ -3,35 +3,90 @@
 <head>
   <title>Olonganes Dictionary</title>
   <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      max-width: 700px;
+      margin: auto;
+    }
+    input {
+      padding: 8px;
+      width: 70%;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .entry {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 15px;
+    }
+    .label {
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
+  <h1>Olonganes Dictionary</h1>
+  <p>This is my personal constructed language dictionary.</p>
 
-<h1>Olonganes Dictionary</h1>
-<p>This is my personal constructed language dictionary.</p>
+  <input id="search" placeholder="Type a word..." />
+  <button onclick="searchWord()">Search</button>
 
-<input id="search" placeholder="Type a word..." />
-<button onclick="searchWord()">Search</button>
+  <div id="result"></div>
 
-<div id="result" style="margin-top:20px;"></div>
+  <script>
+    const dictionary = [
+      {
+        word: "sturelik",
+        meaning: "Hello",
+        definition:
+          "A universal greeting in Olonganes, applicable across both formal and informal social contexts. It functions as a neutral opener in interpersonal communication, signaling acknowledgement, politeness, and social engagement.",
+        synonyms: "Bogoda, Stu, Sturelikaniy",
+        example: "Sturelik! Kome sontu vera? (Hello! How are you?)"
+      },
+      {
+        word: "blyenata",
+        meaning: "Goodbye",
+        definition:
+          "A farewell expression used in both formal and informal settings, typically indicating a temporary separation rather than a permanent departure. It conveys a sense of brief absence and anticipated reunion.",
+        synonyms: "Blyeneti, Blavra, Bleva, Phandias",
+        example: "Blyenata! Metep schkol. (Bye! See you again / Meet soon.)"
+      },
+      {
+        word: "miy",
+        meaning: "I",
+        definition:
+          "A first-person singular subject pronoun referring to the speaker. It is used to express self-reference in statements, emotions, intentions, and actions within grammatical constructions.",
+        synonyms: "Miyla, Misi",
+        example: "Miy sontu khluppi. (I am happy.)"
+      }
+    ];
 
-<script>
-const dictionary = [
-  { word: "sturelik", meaning: "xin chào" }
-];
+    function searchWord() {
+      const input = document.getElementById("search").value.toLowerCase().trim();
+      const result = dictionary.find(d => d.word.toLowerCase() === input);
 
-function searchWord() {
-  const input = document.getElementById("search").value.toLowerCase();
-  const result = dictionary.find(item => item.word === input);
-
-  if (result) {
-    document.getElementById("result").innerHTML =
-      "<b>" + result.word + "</b>: " + result.meaning;
-  } else {
-    document.getElementById("result").innerHTML =
-      "❌ Dumbshit sai chính tả rồi.";
-  }
-}
-</script>
-
+      if (result) {
+        document.getElementById("result").innerHTML = `
+          <div class="entry">
+            <h2>${result.word}</h2>
+            <p><span class="label">Meaning:</span> ${result.meaning}</p>
+            <p><span class="label">Definition:</span> ${result.definition}</p>
+            <p><span class="label">Variations & Synonyms:</span> ${result.synonyms}</p>
+            <p><span class="label">Example:</span> ${result.example}</p>
+          </div>
+        `;
+      } else {
+        document.getElementById("result").innerHTML =
+          "<p>❌ Word not found.</p>";
+      }
+    }
+  </script>
 </body>
 </html>
