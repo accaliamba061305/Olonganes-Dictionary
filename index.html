@@ -2,9 +2,36 @@
 <html>
 <head>
   <title>Olonganes Dictionary</title>
+  <meta charset="UTF-8">
 </head>
 <body>
-  <h1>📘 Olonganes Dictionary</h1>
-  <p>This is my personal constructed language dictionary.</p>
+
+<h1>Olonganes Dictionary</h1>
+<p>This is my personal constructed language dictionary.</p>
+
+<input id="search" placeholder="Type a word..." />
+<button onclick="searchWord()">Search</button>
+
+<div id="result" style="margin-top:20px;"></div>
+
+<script>
+const dictionary = [
+  { word: "sturelik", meaning: "xin chào" }
+];
+
+function searchWord() {
+  const input = document.getElementById("search").value.toLowerCase();
+  const result = dictionary.find(item => item.word === input);
+
+  if (result) {
+    document.getElementById("result").innerHTML =
+      "<b>" + result.word + "</b>: " + result.meaning;
+  } else {
+    document.getElementById("result").innerHTML =
+      "❌ Dumbshit sai chính tả rồi.";
+  }
+}
+</script>
+
 </body>
 </html>
