@@ -92,12 +92,29 @@
   <script>
     // Dictionary mẫu
     const dictionary = [
-      { english: "hello", olonganes: "sturelik", definition: "A universal greeting...", synonyms: "Bogoda, Stu, Sturelikaniy", example: "Sturelik! Kome sontu vera?" },
-      { english: "goodbye", olonganes: "blyenata", definition: "A short-term farewell...", synonyms: "Blyeneti, Blavra, Bleva, Phandias", example: "Blyenata! Metep schkol." },
-      { english: "i", olonganes: "miy", definition: "First-person singular...", synonyms: "Miyla, Misi", example: "Miy sontu khluppi." },
-      // Thêm từ ở đây
+{
+        english: "hello",
+        olonganes: "sturelik",
+        definition: "A universal greeting used in both formal and informal contexts.",
+        synonyms: "Bogoda, Stu, Sturelikaniy",
+        example: "Sturelik! Kome sontu vera?"
+      },
+      {
+        english: "goodbye",
+        olonganes: "blyenata",
+        definition: "A short-term farewell expression.",
+        synonyms: "Blyeneti, Blavra, Bleva, Phandias",
+        example: "Blyenata! Metep schkol."
+      },
+      {
+        english: "i",
+        olonganes: "miy",
+        definition: "First-person singular subject pronoun.",
+        synonyms: "Miyla, Misi",
+        example: "Miy sontu khluppi."
+      }
     ];
-
+    
     // Khởi tạo Fuse.js (rất nhanh và ổn định)
     const fuse = new Fuse(dictionary, {
       keys: ['english'],
