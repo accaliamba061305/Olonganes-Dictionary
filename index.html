@@ -1,255 +1,304 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>English–Olonganes Dictionary</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English–Olonganes Dictionary</title>
+  <style>
+    /* =========================
+       BASE RESET
+       ========================= */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      transition: all 0.3s ease;
+    }
 
-<style>
+    h1, h2, h3, p, span, label,
+    button, input, textarea,
+    #result, #meaning, #output {
+      color: inherit;
+    }
 
-/* =========================
-   BASE RESET
-   ========================= */
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-}
+    input::placeholder {
+      opacity: 0.7;
+    }
 
-h1, h2, h3, p, span, label,
-button, input, textarea,
-#result, #meaning, #output {
-  color: inherit;
-}
+    /* =========================
+       LAYOUT
+       ========================= */
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
 
-input::placeholder {
-  opacity: 1;
-}
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
 
-/* =========================
-   LAYOUT
-   ========================= */
-input {
-  padding: 8px;
-  margin-right: 6px;
-}
+    .search-bar {
+      display: flex;
+      margin-bottom: 16px;
+    }
 
-button {
-  padding: 6px 10px;
-  cursor: pointer;
-}
+    input#search {
+      flex: 1;
+      padding: 12px;
+      font-size: 1.1rem;
+      border-radius: 6px;
+    }
 
-.panel {
-  display: none;
-  margin-top: 12px;
-  animation: fadeIn 0.2s ease;
-}
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 6px;
+      margin-left: 8px;
+    }
 
-#result {
-  margin-top: 12px;
-}
+    .panel {
+      display: none;
+      margin-top: 16px;
+      animation: fadeIn 0.25s ease;
+    }
 
-/* panel polish */
-#meaning,
-#settingsMain,
-#contrastPanel,
-#textPanel {
-  padding: 12px;
-  border-radius: 8px;
-}
+    #result {
+      margin-top: 24px;
+    }
 
-/* =========================
-   CONTRAST: BLACK ON WHITE
-   ========================= */
-body.contrast-bow {
-  background: #ffffff;
-  color: #000000;
-}
+    /* panel polish */
+    #meaning,
+    #settingsMain,
+    #contrastPanel,
+    #textPanel {
+      padding: 16px;
+      border-radius: 10px;
+    }
 
-body.contrast-bow input,
-body.contrast-bow button {
-  background: #ffffff;
-  border: 1px solid #000000;
-}
+    .entry {
+      background: rgba(0,0,0,0.03);
+      padding: 16px;
+      border-radius: 8px;
+    }
 
-body.contrast-bow input::placeholder {
-  color: #000000;
-}
+    /* =========================
+       CONTRAST MODES
+       ========================= */
+    body.contrast-bow {
+      background: #ffffff;
+      color: #000000;
+    }
+    body.contrast-bow input,
+    body.contrast-bow button {
+      background: #fff;
+      border: 1px solid #333;
+    }
+    body.contrast-bow .panel {
+      background: #f8f8f8;
+      border: 2px solid #333;
+    }
 
-/* panels */
-body.contrast-bow #meaning,
-body.contrast-bow #settingsMain,
-body.contrast-bow #contrastPanel,
-body.contrast-bow #textPanel {
-  background: #f0f0f0;
-  border: 2px solid #000000;
-}
+    body.contrast-wob {
+      background: #000000;
+      color: #ffffff;
+    }
+    body.contrast-wob input,
+    body.contrast-wob button {
+      background: #000;
+      border: 1px solid #ccc;
+      color: #fff;
+    }
+    body.contrast-wob .panel {
+      background: #111111;
+      border: 2px solid #ccc;
+    }
 
-/* =========================
-   CONTRAST: WHITE ON BLACK
-   ========================= */
-body.contrast-wob {
-  background: #000000;
-  color: #ffffff;
-}
+    body.contrast-yob {
+      background: #000000;
+      color: #ffff00;
+    }
+    body.contrast-yob input,
+    body.contrast-yob button {
+      background: #000;
+      border: 1px solid #ffff00;
+      color: #ffff00;
+    }
+    body.contrast-yob .panel {
+      background: #1a1a00;
+      border: 2px solid #ffff00;
+    }
 
-body.contrast-wob input,
-body.contrast-wob button {
-  background: #000000;
-  border: 1px solid #ffffff;
-  color: #ffffff;
-}
+    /* =========================
+       TEXT SIZE
+       ========================= */
+    body.size-standard {
+      font-size: 16px;
+    }
+    body.size-large {
+      font-size: 19px;
+    }
+    body.size-very-large {
+      font-size: 22px;
+    }
 
-body.contrast-wob input::placeholder {
-  color: #ffffff;
-}
+    /* =========================
+       ANIMATION
+       ========================= */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-/* panels */
-body.contrast-wob #meaning,
-body.contrast-wob #settingsMain,
-body.contrast-wob #contrastPanel,
-body.contrast-wob #textPanel {
-  background: #111111;
-  border: 2px solid #ffffff;
-}
+    /* Small improvements */
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body class="contrast-bow size-standard">
 
-/* =========================
-   CONTRAST: YELLOW ON BLACK
-   ========================= */
-body.contrast-yob {
-  background: #000000;
-  color: #ffff00;
-}
+  <div class="container">
 
-body.contrast-yob input,
-body.contrast-yob button {
-  background: #000000;
-  border: 1px solid #ffff00;
-  color: #ffff00;
-}
+    <header>
+      <h1>English → Olonganes Dictionary</h1>
+    </header>
 
-body.contrast-yob input::placeholder {
-  color: #ffff00;
-}
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Type English word (e.g. hello)..." autocomplete="off">
+      <button onclick="searchWord()">Search</button>
+      <button onclick="openMainSettings()">⚙️ Settings</button>
+    </div>
 
-/* panels */
-body.contrast-yob #meaning,
-body.contrast-yob #settingsMain,
-body.contrast-yob #contrastPanel,
-body.contrast-yob #textPanel {
-  background: #1a1a00;
-  border: 2px solid #ffff00;
-}
+    <div id="result"></div>
 
-/* =========================
-   ANIMATION
-   ========================= */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+    <!-- SETTINGS PANEL -->
+    <div id="settingsMain" class="panel">
+      <h2>Settings</h2>
+      <button onclick="openContrast()">Contrast Mode</button><br><br>
+      <button onclick="openTextSize()">Text Size</button><br><br>
+      <button onclick="hideAllPanels()">Close</button>
+    </div>
 
-</style>
+    <!-- CONTRAST PANEL -->
+    <div id="contrastPanel" class="panel">
+      <h2>Contrast Mode</h2>
+      <button onclick="setContrast('contrast-bow')">Black on White</button><br><br>
+      <button onclick="setContrast('contrast-wob')">White on Black</button><br><br>
+      <button onclick="setContrast('contrast-yob')">Yellow on Black</button><br><br>
+      <button onclick="back()">← Back</button>
+    </div>
 
+    <!-- TEXT SIZE PANEL -->
+    <div id="textPanel" class="panel">
+      <h2>Text Size</h2>
+      <button onclick="setSize('size-standard')">Standard</button><br><br>
+      <button onclick="setSize('size-large')">Large</button><br><br>
+      <button onclick="setSize('size-very-large')">Very Large</button><br><br>
+      <button onclick="back()">← Back</button>
+    </div>
 
+  </div>
 
-<script>
-const dictionary = [
-  {
-    english: "hello",
-    olonganes: "sturelik",
-    definition: "A universal greeting used in both formal and informal contexts.",
-    synonyms: "Bogoda, Stu, Sturelikaniy",
-    example: "Sturelik! Kome sontu vera?"
-  },
-  {
-    english: "goodbye",
-    olonganes: "blyenata",
-    definition: "A short-term farewell expression.",
-    synonyms: "Blyeneti, Blavra, Bleva, Phandias",
-    example: "Blyenata! Metep schkol."
-  },
-  {
-    english: "i",
-    olonganes: "miy",
-    definition: "First-person singular subject pronoun.",
-    synonyms: "Miyla, Misi",
-    example: "Miy sontu khluppi."
-  }
-];
+  <script>
+    const dictionary = [
+      {
+        english: "hello",
+        olonganes: "sturelik",
+        definition: "A universal greeting used in both formal and informal contexts.",
+        synonyms: "Bogoda, Stu, Sturelikaniy",
+        example: "Sturelik! Kome sontu vera?"
+      },
+      {
+        english: "goodbye",
+        olonganes: "blyenata",
+        definition: "A short-term farewell expression.",
+        synonyms: "Blyeneti, Blavra, Bleva, Phandias",
+        example: "Blyenata! Metep schkol."
+      },
+      {
+        english: "i",
+        olonganes: "miy",
+        definition: "First-person singular subject pronoun.",
+        synonyms: "Miyla, Misi",
+        example: "Miy sontu khluppi."
+      }
+    ];
 
-/* SEARCH */
-function searchWord() {
-  const input = document.getElementById("search").value.trim().toLowerCase();
-  const word = dictionary.find(w => w.english === input);
+    function searchWord() {
+      const input = document.getElementById("search").value.trim().toLowerCase();
+      if (!input) {
+        document.getElementById("result").innerHTML = "<p>→ Please enter a word.</p>";
+        return;
+      }
 
-  document.getElementById("result").innerHTML = word
-    ? `<div class="entry">
-        <h2>${word.olonganes}</h2>
-        <p><b>English:</b> ${word.english}</p>
-        <p><b>Definition:</b> ${word.definition}</p>
-        <p><b>Synonyms:</b> ${word.synonyms}</p>
-        <p><b>Example:</b> ${word.example}</p>
-      </div>`
-    : "<p>❌ Word not found.</p>";
-}
+      const word = dictionary.find(w => w.english.toLowerCase() === input);
+      document.getElementById("result").innerHTML = word
+        ? `<div class="entry">
+            <h2>${word.olonganes}</h2>
+            <p><b>English:</b> ${word.english}</p>
+            <p><b>Definition:</b> ${word.definition}</p>
+            <p><b>Synonyms:</b> ${word.synonyms}</p>
+            <p><b>Example:</b> ${word.example}</p>
+          </div>`
+        : `<p>❌ Word "${input}" not found in dictionary.</p>`;
+    }
 
-/* SETTINGS NAVIGATION */
-function openMainSettings() {
-  hideAllPanels();
-  toggle("settingsMain");
-}
+    // SETTINGS NAVIGATION
+    function openMainSettings() {
+      hideAllPanels();
+      document.getElementById("settingsMain").style.display = "block";
+    }
 
-function openContrast() {
-  hideAllPanels();
-  show("contrastPanel");
-}
+    function openContrast() {
+      hideAllPanels();
+      document.getElementById("contrastPanel").style.display = "block";
+    }
 
-function openTextSize() {
-  hideAllPanels();
-  show("textPanel");
-}
+    function openTextSize() {
+      hideAllPanels();
+      document.getElementById("textPanel").style.display = "block";
+    }
 
-function back() {
-  hideAllPanels();
-  show("settingsMain");
-}
+    function back() {
+      hideAllPanels();
+      document.getElementById("settingsMain").style.display = "block";
+    }
 
-function hideAllPanels() {
-  document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
-}
+    function hideAllPanels() {
+      document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
+    }
 
-function show(id) {
-  document.getElementById(id).style.display = "block";
-}
+    // SETTINGS ACTIONS
+    function setContrast(mode) {
+      document.body.classList.remove("contrast-bow", "contrast-wob", "contrast-yob");
+      document.body.classList.add(mode);
+      localStorage.setItem("contrast", mode);
+    }
 
-function toggle(id) {
-  const el = document.getElementById(id);
-  el.style.display = el.style.display === "block" ? "none" : "block";
-}
+    function setSize(size) {
+      document.body.classList.remove("size-standard", "size-large", "size-very-large");
+      document.body.classList.add(size);
+      localStorage.setItem("size", size);
+    }
 
-/* SETTINGS ACTIONS */
-function setContrast(mode) {
-  document.body.classList.remove("contrast-bow","contrast-wob","contrast-yob");
-  document.body.classList.add(mode);
-  localStorage.setItem("contrast", mode);
-}
+    // RESTORE SETTINGS
+    window.onload = () => {
+      const savedContrast = localStorage.getItem("contrast") || "contrast-bow";
+      const savedSize     = localStorage.getItem("size")     || "size-standard";
+      setContrast(savedContrast);
+      setSize(savedSize);
+    };
 
-function setSize(size) {
-  document.body.classList.remove("size-standard","size-large","size-very-large");
-  document.body.classList.add(size);
-  localStorage.setItem("size", size);
-}
-
-/* RESTORE SETTINGS */
-window.onload = () => {
-  setContrast(localStorage.getItem("contrast") || "contrast-bow");
-  setSize(localStorage.getItem("size") || "size-standard");
-};
-
-/* ENTER TO SEARCH */
-document.getElementById("search").addEventListener("keydown", e => {
-  if (e.key === "Enter") searchWord();
-});
-</script>
+    // ENTER key to search
+    document.getElementById("search").addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        searchWord();
+      }
+    });
+  </script>
 
 </body>
 </html>
