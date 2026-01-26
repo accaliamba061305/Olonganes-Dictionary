@@ -141,14 +141,7 @@ body.contrast-bow input::placeholder {
   color: #000000;
 }
 
-/* panels */
-body.contrast-bow #meaning,
-body.contrast-bow #settingsMain,
-body.contrast-bow #contrastPanel,
-body.contrast-bow #textPanel {
-  background: #f0f0f0;
-  border: 2px solid #000000;
-}
+
 
 /* =========================
    WHITE ON BLACK (contrast-wob)
@@ -181,14 +174,6 @@ body.contrast-wob input::placeholder {
   color: #ffffff;
 }
 
-/* panels */
-body.contrast-wob #meaning,
-body.contrast-wob #settingsMain,
-body.contrast-wob #contrastPanel,
-body.contrast-wob #textPanel {
-  background: #111111;
-  border: 2px solid #ffffff;
-}
 
 /* =========================
    YELLOW ON BLACK (contrast-yob)
@@ -222,7 +207,23 @@ body.contrast-yob input::placeholder {
 }
 
 /* panels */
-body.contrast-yob #meaning,
+body.contrast-bow #result,
+body.contrast-bow #settingsMain,
+body.contrast-bow #contrastPanel,
+body.contrast-bow #textPanel {
+  background: #f0f0f0;
+  border: 2px solid #000000;
+}
+
+body.contrast-wob #result,
+body.contrast-wob #settingsMain,
+body.contrast-wob #contrastPanel,
+body.contrast-wob #textPanel {
+  background: #111111;
+  border: 2px solid #ffffff;
+}
+
+body.contrast-yob #result,
 body.contrast-yob #settingsMain,
 body.contrast-yob #contrastPanel,
 body.contrast-yob #textPanel {
@@ -233,7 +234,7 @@ body.contrast-yob #textPanel {
 /* =========================
    PANEL POLISH (shared)
    ========================= */
-#meaning,
+#result,
 #settingsMain,
 #contrastPanel,
 #textPanel {
@@ -241,6 +242,7 @@ body.contrast-yob #textPanel {
   border-radius: 8px;
 }
 
+  
 
 
 /* ============ ANIMATION ============ */
