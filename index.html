@@ -242,16 +242,198 @@ body.contrast-yob #textPanel {
   border-radius: 8px;
 }
 
-  
+/* =========================
+   BASE LAYOUT
+   ========================= */
+body {
+  margin: 20px;
+  font-family: system-ui, sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
 
+h1 {
+  margin-bottom: 4px;
+}
 
-/* ============ ANIMATION ============ */
+p {
+  margin-top: 0;
+  opacity: 0.9;
+}
 
+input, button {
+  font-size: 1rem;
+  padding: 6px 10px;
+  margin: 4px 2px;
+}
+
+/* =========================
+   PANELS
+   ========================= */
+.panel {
+  display: none;
+  margin-top: 12px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+#result {
+  margin-top: 16px;
+  min-height: 80px;
+}
+
+/* =========================
+   SETTINGS BUTTON
+   ========================= */
+.settings-button {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  font-size: 20px;
+}
+
+/* =========================
+   TEXT SIZE
+   ========================= */
+body.size-standard { font-size: 16px; }
+body.size-large { font-size: 20px; }
+body.size-very-large { font-size: 24px; }
+
+/* =========================
+   GLOBAL COLOR NORMALIZATION
+   ========================= */
+h1, h2, h3, p, span, label,
+button, input, textarea,
+#result {
+  color: inherit;
+}
+
+input::placeholder {
+  opacity: 1;
+}
+
+/* =========================
+   CONTRAST: BLACK ON WHITE
+   ========================= */
+body.contrast-bow {
+  background: #ffffff;
+  color: #000000;
+}
+
+body.contrast-bow input,
+body.contrast-bow button {
+  background: #ffffff;
+  border: 1px solid #000000;
+}
+
+body.contrast-bow input::placeholder {
+  color: #000000;
+}
+
+/* =========================
+   CONTRAST: WHITE ON BLACK
+   ========================= */
+body.contrast-wob {
+  background: #000000;
+  color: #ffffff;
+}
+
+body.contrast-wob input,
+body.contrast-wob button {
+  background: #000000;
+  border: 1px solid #ffffff;
+}
+
+body.contrast-wob input::placeholder {
+  color: #ffffff;
+}
+
+/* =========================
+   CONTRAST: YELLOW ON BLACK
+   ========================= */
+body.contrast-yob {
+  background: #000000;
+  color: #ffff00;
+}
+
+body.contrast-yob input,
+body.contrast-yob button {
+  background: #000000;
+  border: 1px solid #ffff00;
+}
+
+body.contrast-yob input::placeholder {
+  color: #ffff00;
+}
+
+/* =========================
+   PANELS – SHARED STYLE
+   ========================= */
+#settingsMain,
+#contrastPanel,
+#textPanel,
+#result {
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* =========================
+   SETTINGS PANELS PALETTE
+   ========================= */
+
+/* Black on White */
+body.contrast-bow #settingsMain,
+body.contrast-bow #contrastPanel,
+body.contrast-bow #textPanel {
+  background: #f0f0f0;
+  border: 2px solid #000000;
+}
+
+/* White on Black */
+body.contrast-wob #settingsMain,
+body.contrast-wob #contrastPanel,
+body.contrast-wob #textPanel {
+  background: #111111;
+  border: 2px solid #ffffff;
+}
+
+/* Yellow on Black */
+body.contrast-yob #settingsMain,
+body.contrast-yob #contrastPanel,
+body.contrast-yob #textPanel {
+  background: #1a1a00;
+  border: 2px solid #ffff00;
+}
+
+/* =========================
+   MEANING PANEL PALETTE
+   ========================= */
+
+/* Black on White */
+body.contrast-bow #result {
+  background: #f0f0f0;
+  border: 2px solid #000000;
+}
+
+/* White on Black */
+body.contrast-wob #result {
+  background: #000000;
+  border: 2px solid #ffffff;
+}
+
+/* Yellow on Black */
+body.contrast-yob #result {
+  background: #000000;
+  border: 2px solid #ffff00;
+}
+
+/* =========================
+   ANIMATION
+   ========================= */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-</style>
+
+<style>
 </head>
 
 <body>
@@ -290,6 +472,10 @@ body.contrast-yob #textPanel {
 </div>
 
 <div id="result"></div>
+
+
+
+
 
 <script>
 const dictionary = [
