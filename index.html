@@ -1,160 +1,127 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>English–Olonganes Dictionary</title>
+  <title>English – Olonganes Dictionary</title>
   <style>
-    /* =========================
-       BASE RESET
-       ========================= */
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --panel-bg: #f8f8f8;
+      --border: #333;
+    }
+
     body {
       margin: 0;
       padding: 20px;
-      font-family: system-ui, -apple-system, sans-serif;
-      line-height: 1.5;
+      font-family: system-ui, sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
       transition: all 0.3s ease;
     }
 
-    h1, h2, h3, p, span, label,
-    button, input, textarea,
-    #result, #meaning, #output {
-      color: inherit;
-    }
-
-    input::placeholder {
-      opacity: 0.7;
-    }
-
-    /* =========================
-       LAYOUT
-       ========================= */
     .container {
-      max-width: 700px;
+      max-width: 720px;
       margin: 0 auto;
     }
 
     header {
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
     }
 
     .search-bar {
       display: flex;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 24px;
     }
 
     input#search {
       flex: 1;
-      padding: 12px;
+      padding: 12px 16px;
       font-size: 1.1rem;
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
     }
 
     button {
       padding: 12px 20px;
       font-size: 1rem;
       cursor: pointer;
-      border-radius: 6px;
-      margin-left: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel-bg);
+      color: var(--text);
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: rgba(0,0,0,0.08);
+    }
+
+    #result {
+      margin-top: 16px;
+    }
+
+    .entry {
+      background: var(--panel-bg);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
     }
 
     .panel {
       display: none;
       margin-top: 16px;
+      padding: 20px;
+      background: var(--panel-bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
       animation: fadeIn 0.25s ease;
     }
 
-    #result {
-      margin-top: 24px;
+    .settings-btn {
+      font-size: 1.8rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      color: var(--text);
     }
 
-    /* panel polish */
-    #meaning,
-    #settingsMain,
-    #contrastPanel,
-    #textPanel {
-      padding: 16px;
-      border-radius: 10px;
+    .settings-btn:hover {
+      transform: rotate(15deg);
     }
 
-    .entry {
-      background: rgba(0,0,0,0.03);
-      padding: 16px;
-      border-radius: 8px;
-    }
+    /* Contrast modes */
+    body.contrast-bow { --bg: #ffffff; --text: #000000; --panel-bg: #f0f0f0; --border: #333; }
+    body.contrast-wob { --bg: #000000; --text: #ffffff; --panel-bg: #111111; --border: #ccc; }
+    body.contrast-yob { --bg: #000000; --text: #ffff00; --panel-bg: #1a1a00; --border: #ffff00; }
 
-    /* =========================
-       CONTRAST MODES
-       ========================= */
-    body.contrast-bow {
-      background: #ffffff;
-      color: #000000;
-    }
-    body.contrast-bow input,
-    body.contrast-bow button {
-      background: #fff;
-      border: 1px solid #333;
-    }
-    body.contrast-bow .panel {
-      background: #f8f8f8;
-      border: 2px solid #333;
-    }
+    /* Text sizes */
+    body.size-standard { font-size: 16px; }
+    body.size-large    { font-size: 19px; }
+    body.size-xlarge   { font-size: 22px; }
 
-    body.contrast-wob {
-      background: #000000;
-      color: #ffffff;
-    }
-    body.contrast-wob input,
-    body.contrast-wob button {
-      background: #000;
-      border: 1px solid #ccc;
-      color: #fff;
-    }
-    body.contrast-wob .panel {
-      background: #111111;
-      border: 2px solid #ccc;
-    }
-
-    body.contrast-yob {
-      background: #000000;
-      color: #ffff00;
-    }
-    body.contrast-yob input,
-    body.contrast-yob button {
-      background: #000;
-      border: 1px solid #ffff00;
-      color: #ffff00;
-    }
-    body.contrast-yob .panel {
-      background: #1a1a00;
-      border: 2px solid #ffff00;
-    }
-
-    /* =========================
-       TEXT SIZE
-       ========================= */
-    body.size-standard {
-      font-size: 16px;
-    }
-    body.size-large {
-      font-size: 19px;
-    }
-    body.size-very-large {
-      font-size: 22px;
-    }
-
-    /* =========================
-       ANIMATION
-       ========================= */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Small improvements */
-    button:hover {
-      opacity: 0.9;
+    @media (max-width: 500px) {
+      .search-bar { flex-direction: column; }
+      button { width: 100%; }
     }
   </style>
 </head>
@@ -163,41 +130,33 @@
   <div class="container">
 
     <header>
-      <h1>English → Olonganes Dictionary</h1>
+      <h1>English → Olonganes</h1>
+      <button class="settings-btn" onclick="toggleSettings()" title="Settings">⚙️</button>
     </header>
 
     <div class="search-bar">
-      <input type="text" id="search" placeholder="Type English word (e.g. hello)..." autocomplete="off">
+      <input type="text" id="search" placeholder="Enter English word (e.g. hello)" autocomplete="off">
       <button onclick="searchWord()">Search</button>
-      <button onclick="openMainSettings()">⚙️ Settings</button>
     </div>
 
     <div id="result"></div>
 
-    <!-- SETTINGS PANEL -->
-    <div id="settingsMain" class="panel">
+    <!-- Settings Panel -->
+    <div id="settingsPanel" class="panel">
       <h2>Settings</h2>
-      <button onclick="openContrast()">Contrast Mode</button><br><br>
-      <button onclick="openTextSize()">Text Size</button><br><br>
-      <button onclick="hideAllPanels()">Close</button>
-    </div>
+      
+      <h3>Contrast Mode</h3>
+      <button onclick="setContrast('contrast-bow')">Black on White</button>
+      <button onclick="setContrast('contrast-wob')">White on Black</button>
+      <button onclick="setContrast('contrast-yob')">Yellow on Black</button>
 
-    <!-- CONTRAST PANEL -->
-    <div id="contrastPanel" class="panel">
-      <h2>Contrast Mode</h2>
-      <button onclick="setContrast('contrast-bow')">Black on White</button><br><br>
-      <button onclick="setContrast('contrast-wob')">White on Black</button><br><br>
-      <button onclick="setContrast('contrast-yob')">Yellow on Black</button><br><br>
-      <button onclick="back()">← Back</button>
-    </div>
+      <h3>Text Size</h3>
+      <button onclick="setSize('size-standard')">Standard</button>
+      <button onclick="setSize('size-large')">Large</button>
+      <button onclick="setSize('size-xlarge')">Extra Large</button>
 
-    <!-- TEXT SIZE PANEL -->
-    <div id="textPanel" class="panel">
-      <h2>Text Size</h2>
-      <button onclick="setSize('size-standard')">Standard</button><br><br>
-      <button onclick="setSize('size-large')">Large</button><br><br>
-      <button onclick="setSize('size-very-large')">Very Large</button><br><br>
-      <button onclick="back()">← Back</button>
+      <br><br>
+      <button onclick="toggleSettings()">Close</button>
     </div>
 
   </div>
@@ -230,48 +189,27 @@
     function searchWord() {
       const input = document.getElementById("search").value.trim().toLowerCase();
       if (!input) {
-        document.getElementById("result").innerHTML = "<p>→ Please enter a word.</p>";
+        document.getElementById("result").innerHTML = "<p style='color: orange;'>Please type a word.</p>";
         return;
       }
 
-      const word = dictionary.find(w => w.english.toLowerCase() === input);
-      document.getElementById("result").innerHTML = word
+      const entry = dictionary.find(w => w.english.toLowerCase() === input);
+      document.getElementById("result").innerHTML = entry
         ? `<div class="entry">
-            <h2>${word.olonganes}</h2>
-            <p><b>English:</b> ${word.english}</p>
-            <p><b>Definition:</b> ${word.definition}</p>
-            <p><b>Synonyms:</b> ${word.synonyms}</p>
-            <p><b>Example:</b> ${word.example}</p>
+            <h2>${entry.olonganes}</h2>
+            <p><b>English:</b> ${entry.english}</p>
+            <p><b>Definition:</b> ${entry.definition}</p>
+            <p><b>Synonyms:</b> ${entry.synonyms}</p>
+            <p><b>Example:</b> ${entry.example}</p>
           </div>`
-        : `<p>❌ Word "${input}" not found in dictionary.</p>`;
+        : `<p style='color: tomato;'>❌ No entry for "${input}"</p>`;
     }
 
-    // SETTINGS NAVIGATION
-    function openMainSettings() {
-      hideAllPanels();
-      document.getElementById("settingsMain").style.display = "block";
+    function toggleSettings() {
+      const panel = document.getElementById("settingsPanel");
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
     }
 
-    function openContrast() {
-      hideAllPanels();
-      document.getElementById("contrastPanel").style.display = "block";
-    }
-
-    function openTextSize() {
-      hideAllPanels();
-      document.getElementById("textPanel").style.display = "block";
-    }
-
-    function back() {
-      hideAllPanels();
-      document.getElementById("settingsMain").style.display = "block";
-    }
-
-    function hideAllPanels() {
-      document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
-    }
-
-    // SETTINGS ACTIONS
     function setContrast(mode) {
       document.body.classList.remove("contrast-bow", "contrast-wob", "contrast-yob");
       document.body.classList.add(mode);
@@ -279,24 +217,22 @@
     }
 
     function setSize(size) {
-      document.body.classList.remove("size-standard", "size-large", "size-very-large");
+      document.body.classList.remove("size-standard", "size-large", "size-xlarge");
       document.body.classList.add(size);
       localStorage.setItem("size", size);
     }
 
-    // RESTORE SETTINGS
-    window.onload = () => {
-      const savedContrast = localStorage.getItem("contrast") || "contrast-bow";
-      const savedSize     = localStorage.getItem("size")     || "size-standard";
-      setContrast(savedContrast);
-      setSize(savedSize);
-    };
+    // Load saved settings
+    window.addEventListener("load", () => {
+      const contrast = localStorage.getItem("contrast") || "contrast-bow";
+      const size = localStorage.getItem("size") || "size-standard";
+      setContrast(contrast);
+      setSize(size);
+    });
 
-    // ENTER key to search
+    // Search by Enter key
     document.getElementById("search").addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        searchWord();
-      }
+      if (e.key === "Enter") searchWord();
     });
   </script>
 
