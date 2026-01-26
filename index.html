@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>English – Olonganes Dictionary</title>
-  <!-- uFuzzy CDN mới - jsDelivr, ổn định hơn -->
-  <script src="https://cdn.jsdelivr.net/npm/@leeoniya/ufuzzy@1.0.14/dist/umd/uFuzzy.min.js"></script>
+  <!-- Fuse.js CDN ổn định từ jsDelivr -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
   <style>
-    /* Giữ nguyên CSS cũ + phần suggestions */
+    /* CSS giữ nguyên, chỉ thêm cho dropdown */
     .suggestions {
       position: absolute;
       background: var(--panel-bg);
@@ -24,17 +24,14 @@
       padding: 10px 16px;
       cursor: pointer;
     }
-    .suggestion-item:hover,
-    .suggestion-item.active {
+    .suggestion-item:hover, .suggestion-item.active {
       background: rgba(0,0,0,0.1);
     }
     .highlight {
       font-weight: bold;
       background: rgba(255,255,0,0.3);
     }
-    :root {
-      --bg: #ffffff; --text: #000000; --panel-bg: #f8f8f8; --border: #333;
-    }
+    :root { --bg: #ffffff; --text: #000000; --panel-bg: #f8f8f8; --border: #333; }
     body { margin: 0; padding: 20px; font-family: system-ui, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); transition: all 0.3s ease; }
     .container { max-width: 720px; margin: 0 auto; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
@@ -51,8 +48,8 @@
     body.contrast-wob { --bg: #000000; --text: #ffffff; --panel-bg: #111111; --border: #ccc; }
     body.contrast-yob { --bg: #000000; --text: #ffff00; --panel-bg: #1a1a00; --border: #ffff00; }
     body.size-standard { font-size: 16px; }
-    body.size-large    { font-size: 19px; }
-    body.size-xlarge   { font-size: 22px; }
+    body.size-large { font-size: 19px; }
+    body.size-xlarge { font-size: 22px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @media (max-width: 500px) { .search-bar { flex-direction: column; } button { width: 100%; } }
   </style>
@@ -101,22 +98,26 @@
       // Thêm từ ở đây
     ];
 
-    // Khởi tạo uFuzzy
-    const uf = new uFuzzy({ blockPerms: 2, bound: true });
+    // Khởi tạo Fuse.js (rất nhanh và ổn định)
+    const fuse = new Fuse(dictionary, {
+      keys: ['english'],
+      threshold: 0.4,  // Độ nhạy fuzzy (0.0 = exact, 0.4 = cho phép sai khá nhiều)
+      includeScore: true,
+      shouldSort: true
+    });
 
     function findEntry(query) {
-      query = query.trim().toLowerCase();
+      query = query.trim();
       if (!query) return null;
 
-      let exact = dictionary.find(w => w.english.toLowerCase() === query);
+      // Tìm exact trước
+      let exact = dictionary.find(w => w.english.toLowerCase() === query.toLowerCase());
       if (exact) return { entry: exact, exact: true };
 
-      let haystack = dictionary.map(w => w.english.toLowerCase());
-      let [ranges, indices, count] = uf.search(haystack, query);
-
-      if (count > 0) {
-        let bestIdx = indices[0];
-        return { entry: dictionary[bestIdx], exact: false };
+      // Fuzzy search
+      let results = fuse.search(query);
+      if (results.length > 0) {
+        return { entry: results[0].item, exact: false };
       }
       return null;
     }
@@ -155,21 +156,19 @@
     const suggestionsDiv = document.getElementById("suggestions");
 
     searchInput.addEventListener("input", () => {
-      const query = searchInput.value.trim().toLowerCase();
+      const query = searchInput.value.trim();
       suggestionsDiv.innerHTML = "";
       suggestionsDiv.style.display = "none";
 
       if (query.length < 2) return;
 
-      let haystack = dictionary.map(w => w.english.toLowerCase());
-      let [ranges, indices] = uf.search(haystack, query);
-
-      if (indices && indices.length > 0) {
+      let results = fuse.search(query);
+      if (results.length > 0) {
         let html = "";
-        for (let i = 0; i < Math.min(8, indices.length); i++) {
-          let idx = indices[i];
-          let word = dictionary[idx].english;
-          let highlighted = uf.highlight(word, ranges[i * 2], ranges[i * 2 + 1], '<span class="highlight">', '</span>');
+        for (let i = 0; i < Math.min(8, results.length); i++) {
+          let word = results[i].item.english;
+          // Highlight đơn giản (Fuse không có highlight sẵn, mình làm thủ công)
+          let highlighted = word.replace(new RegExp(query, 'gi'), match => `<span class="highlight">${match}</span>`);
           html += `<div class="suggestion-item" onclick="selectSuggestion('${word}')">${highlighted}</div>`;
         }
         suggestionsDiv.innerHTML = html;
@@ -189,6 +188,7 @@
       }
     });
 
+    // Các hàm settings giữ nguyên
     function toggleSettings() {
       const panel = document.getElementById("settingsPanel");
       panel.style.display = panel.style.display === "block" ? "none" : "block";
