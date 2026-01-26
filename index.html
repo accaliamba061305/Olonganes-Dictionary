@@ -5,114 +5,15 @@
 <title>English–Olonganes Dictionary</title>
 
 <style>
-/* ============ BASE ============ */
 
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #ffffff;
-  color: #111;
-  padding: 40px;
-  max-width: 760px;
-  margin: auto;
-  transition: 0.3s ease;
-}
-
-h1 {
-  text-align: center;
-}
-
-p {
-  text-align: center;
-  color: #444;
-}
-
-input {
-  padding: 12px;
-  width: 65%;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-}
-
-#result {
-  margin-top: 30px;
-}
-
-.entry {
-  background: #f6f6f6;
-  padding: 22px;
-  border-radius: 12px;
-  animation: fadeIn 0.25s ease;
-}
-
-.label {
-  font-weight: bold;
-}
-
-/* ============ BUTTON ============ */
-
-button {
-  padding: 12px 16px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #5f8cff, #3f6cff);
-  color: white;
-  cursor: pointer;
-  transition: 0.15s;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-
-button:active {
-  transform: translateY(1px) scale(0.97);
-}
-
-/* ============ SETTINGS BUTTON ============ */
-
-.settings-button {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 1000;
-}
-
-/* ============ SETTINGS PANEL ============ */
-
-.panel {
-  position: fixed;
-  top: 70px;
-  right: 16px;
-  width: 260px;
-  background: #ffffff;
-  padding: 18px;
-  border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-  display: none;
-}
-
-.panel h3 {
-  text-align: center;
-}
-
-.panel button {
-  width: 100%;
-  margin-top: 10px;
-}
-
-/* ============ TEXT SIZE ============ */
-
-body.size-standard { font-size: 16px; }
-body.size-large { font-size: 20px; }
-body.size-very-large { font-size: 24px; }
-
-/* ============ CONTRAST ============ */
 /* =========================
-   GLOBAL COLOR NORMALIZATION
+   BASE RESET
    ========================= */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
 h1, h2, h3, p, span, label,
 button, input, textarea,
 #result, #meaning, #output {
@@ -124,190 +25,35 @@ input::placeholder {
 }
 
 /* =========================
-   BLACK ON WHITE (contrast-bow)
+   LAYOUT
    ========================= */
-body.contrast-bow {
-  background: #ffffff;
-  color: #000000;
+input {
+  padding: 8px;
+  margin-right: 6px;
 }
 
-body.contrast-bow input,
-body.contrast-bow button {
-  background: #ffffff;
-  border: 1px solid #000000;
+button {
+  padding: 6px 10px;
+  cursor: pointer;
 }
 
-body.contrast-bow input::placeholder {
-  color: #000000;
+.panel {
+  display: none;
+  margin-top: 12px;
+  animation: fadeIn 0.2s ease;
 }
 
-
-
-/* =========================
-   WHITE ON BLACK (contrast-wob)
-   ========================= */
-body.contrast-wob {
-  background: #000000;
-  color: #ffffff;
+#result {
+  margin-top: 12px;
 }
 
-body.contrast-wob h1,
-body.contrast-wob h2,
-body.contrast-wob h3,
-body.contrast-wob p,
-body.contrast-wob span,
-body.contrast-wob label,
-body.contrast-wob button,
-body.contrast-wob input,
-body.contrast-wob #result,
-body.contrast-wob #meaning {
-  color: #ffffff !important;
-}
-
-body.contrast-wob input,
-body.contrast-wob button {
-  background: #000000;
-  border: 1px solid #ffffff;
-}
-
-body.contrast-wob input::placeholder {
-  color: #ffffff;
-}
-
-
-/* =========================
-   YELLOW ON BLACK (contrast-yob)
-   ========================= */
-body.contrast-yob {
-  background: #000000;
-  color: #ffff00;
-}
-
-body.contrast-yob h1,
-body.contrast-yob h2,
-body.contrast-yob h3,
-body.contrast-yob p,
-body.contrast-yob span,
-body.contrast-yob label,
-body.contrast-yob button,
-body.contrast-yob input,
-body.contrast-yob #result,
-body.contrast-yob #meaning {
-  color: #ffff00 !important;
-}
-
-body.contrast-yob input,
-body.contrast-yob button {
-  background: #000000;
-  border: 1px solid #ffff00;
-}
-
-body.contrast-yob input::placeholder {
-  color: #ffff00;
-}
-
-/* panels */
-body.contrast-bow #result,
-body.contrast-bow #settingsMain,
-body.contrast-bow #contrastPanel,
-body.contrast-bow #textPanel {
-  background: #f0f0f0;
-  border: 2px solid #000000;
-}
-
-body.contrast-wob #result,
-body.contrast-wob #settingsMain,
-body.contrast-wob #contrastPanel,
-body.contrast-wob #textPanel {
-  background: #111111;
-  border: 2px solid #ffffff;
-}
-
-body.contrast-yob #result,
-body.contrast-yob #settingsMain,
-body.contrast-yob #contrastPanel,
-body.contrast-yob #textPanel {
-  background: #1a1a00;
-  border: 2px solid #ffff00;
-}
-
-/* =========================
-   PANEL POLISH (shared)
-   ========================= */
-#result,
+/* panel polish */
+#meaning,
 #settingsMain,
 #contrastPanel,
 #textPanel {
   padding: 12px;
   border-radius: 8px;
-}
-
-/* =========================
-   BASE LAYOUT
-   ========================= */
-body {
-  margin: 20px;
-  font-family: system-ui, sans-serif;
-  transition: background 0.2s, color 0.2s;
-}
-
-h1 {
-  margin-bottom: 4px;
-}
-
-p {
-  margin-top: 0;
-  opacity: 0.9;
-}
-
-input, button {
-  font-size: 1rem;
-  padding: 6px 10px;
-  margin: 4px 2px;
-}
-
-/* =========================
-   PANELS
-   ========================= */
-.panel {
-  display: none;
-  margin-top: 12px;
-  animation: fadeIn 0.15s ease-out;
-}
-
-#result {
-  margin-top: 16px;
-  min-height: 80px;
-}
-
-/* =========================
-   SETTINGS BUTTON
-   ========================= */
-.settings-button {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  font-size: 20px;
-}
-
-/* =========================
-   TEXT SIZE
-   ========================= */
-body.size-standard { font-size: 16px; }
-body.size-large { font-size: 20px; }
-body.size-very-large { font-size: 24px; }
-
-/* =========================
-   GLOBAL COLOR NORMALIZATION
-   ========================= */
-h1, h2, h3, p, span, label,
-button, input, textarea,
-#result {
-  color: inherit;
-}
-
-input::placeholder {
-  opacity: 1;
 }
 
 /* =========================
@@ -328,6 +74,15 @@ body.contrast-bow input::placeholder {
   color: #000000;
 }
 
+/* panels */
+body.contrast-bow #meaning,
+body.contrast-bow #settingsMain,
+body.contrast-bow #contrastPanel,
+body.contrast-bow #textPanel {
+  background: #f0f0f0;
+  border: 2px solid #000000;
+}
+
 /* =========================
    CONTRAST: WHITE ON BLACK
    ========================= */
@@ -340,10 +95,20 @@ body.contrast-wob input,
 body.contrast-wob button {
   background: #000000;
   border: 1px solid #ffffff;
+  color: #ffffff;
 }
 
 body.contrast-wob input::placeholder {
   color: #ffffff;
+}
+
+/* panels */
+body.contrast-wob #meaning,
+body.contrast-wob #settingsMain,
+body.contrast-wob #contrastPanel,
+body.contrast-wob #textPanel {
+  background: #111111;
+  border: 2px solid #ffffff;
 }
 
 /* =========================
@@ -358,70 +123,19 @@ body.contrast-yob input,
 body.contrast-yob button {
   background: #000000;
   border: 1px solid #ffff00;
+  color: #ffff00;
 }
 
 body.contrast-yob input::placeholder {
   color: #ffff00;
 }
 
-/* =========================
-   PANELS – SHARED STYLE
-   ========================= */
-#settingsMain,
-#contrastPanel,
-#textPanel,
-#result {
-  padding: 12px;
-  border-radius: 8px;
-}
-
-/* =========================
-   SETTINGS PANELS PALETTE
-   ========================= */
-
-/* Black on White */
-body.contrast-bow #settingsMain,
-body.contrast-bow #contrastPanel,
-body.contrast-bow #textPanel {
-  background: #f0f0f0;
-  border: 2px solid #000000;
-}
-
-/* White on Black */
-body.contrast-wob #settingsMain,
-body.contrast-wob #contrastPanel,
-body.contrast-wob #textPanel {
-  background: #111111;
-  border: 2px solid #ffffff;
-}
-
-/* Yellow on Black */
+/* panels */
+body.contrast-yob #meaning,
 body.contrast-yob #settingsMain,
 body.contrast-yob #contrastPanel,
 body.contrast-yob #textPanel {
   background: #1a1a00;
-  border: 2px solid #ffff00;
-}
-
-/* =========================
-   MEANING PANEL PALETTE
-   ========================= */
-
-/* Black on White */
-body.contrast-bow #result {
-  background: #f0f0f0;
-  border: 2px solid #000000;
-}
-
-/* White on Black */
-body.contrast-wob #result {
-  background: #000000;
-  border: 2px solid #ffffff;
-}
-
-/* Yellow on Black */
-body.contrast-yob #result {
-  background: #000000;
   border: 2px solid #ffff00;
 }
 
@@ -433,46 +147,7 @@ body.contrast-yob #result {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-</head>
-
-<body>
-
-<h1>English–Olonganes Dictionary</h1>
-<p>A personal constructed-language dictionary.</p>
-
-<input id="search" placeholder="Type an English word...">
-<button onclick="searchWord()">Search</button>
-
-<button class="settings-button" onclick="openMainSettings()">⚙️</button>
-
-<!-- SETTINGS MAIN -->
-<div id="settingsMain" class="panel">
-  <h3>Settings</h3>
-  <button onclick="openContrast()">🎨 Contrast</button>
-  <button onclick="openTextSize()">🔠 Text Size</button>
-</div>
-
-<!-- CONTRAST PANEL -->
-<div id="contrastPanel" class="panel">
-  <h3>Contrast</h3>
-  <button onclick="setContrast('contrast-bow')">Black on White</button>
-  <button onclick="setContrast('contrast-wob')">White on Black</button>
-  <button onclick="setContrast('contrast-yob')">Yellow on Black</button>
-  <button onclick="back()">⬅ Back</button>
-</div>
-
-<!-- TEXT SIZE PANEL -->
-<div id="textPanel" class="panel">
-  <h3>Text Size</h3>
-  <button onclick="setSize('size-standard')">Standard</button>
-  <button onclick="setSize('size-large')">Large</button>
-  <button onclick="setSize('size-very-large')">Very Large</button>
-  <button onclick="back()">⬅ Back</button>
-</div>
-
-<div id="result"></div>
-
-
+</style>
 
 
 
