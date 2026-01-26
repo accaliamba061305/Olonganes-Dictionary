@@ -4,125 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>English – Olonganes Dictionary</title>
+  <!-- uFuzzy CDN mới - jsDelivr, ổn định hơn -->
+  <script src="https://cdn.jsdelivr.net/npm/@leeoniya/ufuzzy@1.0.14/dist/umd/uFuzzy.min.js"></script>
   <style>
-    :root {
-      --bg: #ffffff;
-      --text: #000000;
-      --panel-bg: #f8f8f8;
-      --border: #333;
-    }
-
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: system-ui, sans-serif;
-      line-height: 1.6;
-      background: var(--bg);
-      color: var(--text);
-      transition: all 0.3s ease;
-    }
-
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    .search-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    input#search {
-      flex: 1;
-      padding: 12px 16px;
-      font-size: 1.1rem;
+    /* Giữ nguyên CSS cũ + phần suggestions */
+    .suggestions {
+      position: absolute;
+      background: var(--panel-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    button {
-      padding: 12px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--panel-bg);
-      color: var(--text);
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background: rgba(0,0,0,0.08);
-    }
-
-    #result {
-      margin-top: 16px;
-    }
-
-    .entry {
-      background: var(--panel-bg);
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-    }
-
-    .panel {
+      max-height: 250px;
+      overflow-y: auto;
+      width: calc(100% - 80px);
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       display: none;
-      margin-top: 16px;
-      padding: 20px;
-      background: var(--panel-bg);
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      animation: fadeIn 0.25s ease;
     }
-
-    .settings-btn {
-      font-size: 1.8rem;
-      background: transparent;
-      border: none;
+    .suggestion-item {
+      padding: 10px 16px;
       cursor: pointer;
-      padding: 8px;
-      color: var(--text);
     }
-
-    .settings-btn:hover {
-      transform: rotate(15deg);
+    .suggestion-item:hover,
+    .suggestion-item.active {
+      background: rgba(0,0,0,0.1);
     }
-
-    /* Contrast modes */
+    .highlight {
+      font-weight: bold;
+      background: rgba(255,255,0,0.3);
+    }
+    :root {
+      --bg: #ffffff; --text: #000000; --panel-bg: #f8f8f8; --border: #333;
+    }
+    body { margin: 0; padding: 20px; font-family: system-ui, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); transition: all 0.3s ease; }
+    .container { max-width: 720px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    h1 { margin: 0; font-size: 2rem; }
+    .search-bar { position: relative; display: flex; gap: 10px; margin-bottom: 24px; }
+    input#search { flex: 1; padding: 12px 16px; font-size: 1.1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+    button { padding: 12px 20px; font-size: 1rem; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
+    button:hover { background: rgba(0,0,0,0.08); }
+    #result { margin-top: 16px; }
+    .entry { background: var(--panel-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
+    .panel { display: none; margin-top: 16px; padding: 20px; background: var(--panel-bg); border: 2px solid var(--border); border-radius: 10px; animation: fadeIn 0.25s ease; }
+    .settings-btn { font-size: 1.8rem; background: transparent; border: none; cursor: pointer; padding: 8px; color: var(--text); }
     body.contrast-bow { --bg: #ffffff; --text: #000000; --panel-bg: #f0f0f0; --border: #333; }
     body.contrast-wob { --bg: #000000; --text: #ffffff; --panel-bg: #111111; --border: #ccc; }
     body.contrast-yob { --bg: #000000; --text: #ffff00; --panel-bg: #1a1a00; --border: #ffff00; }
-
-    /* Text sizes */
     body.size-standard { font-size: 16px; }
     body.size-large    { font-size: 19px; }
     body.size-xlarge   { font-size: 22px; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 500px) {
-      .search-bar { flex-direction: column; }
-      button { width: 100%; }
-    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 500px) { .search-bar { flex-direction: column; } button { width: 100%; } }
   </style>
 </head>
 <body class="contrast-bow size-standard">
@@ -135,26 +67,25 @@
     </header>
 
     <div class="search-bar">
-      <input type="text" id="search" placeholder="Enter English word (e.g. hello)" autocomplete="off">
+      <div style="position: relative; flex: 1;">
+        <input type="text" id="search" placeholder="Enter English word (e.g. hello)" autocomplete="off">
+        <div id="suggestions" class="suggestions"></div>
+      </div>
       <button onclick="searchWord()">Search</button>
     </div>
 
     <div id="result"></div>
 
-    <!-- Settings Panel -->
     <div id="settingsPanel" class="panel">
       <h2>Settings</h2>
-      
       <h3>Contrast Mode</h3>
       <button onclick="setContrast('contrast-bow')">Black on White</button>
       <button onclick="setContrast('contrast-wob')">White on Black</button>
       <button onclick="setContrast('contrast-yob')">Yellow on Black</button>
-
       <h3>Text Size</h3>
       <button onclick="setSize('size-standard')">Standard</button>
       <button onclick="setSize('size-large')">Large</button>
       <button onclick="setSize('size-xlarge')">Extra Large</button>
-
       <br><br>
       <button onclick="toggleSettings()">Close</button>
     </div>
@@ -162,48 +93,101 @@
   </div>
 
   <script>
+    // Dictionary mẫu
     const dictionary = [
-      {
-        english: "hello",
-        olonganes: "sturelik",
-        definition: "A universal greeting used in both formal and informal contexts.",
-        synonyms: "Bogoda, Stu, Sturelikaniy",
-        example: "Sturelik! Kome sontu vera?"
-      },
-      {
-        english: "goodbye",
-        olonganes: "blyenata",
-        definition: "A short-term farewell expression.",
-        synonyms: "Blyeneti, Blavra, Bleva, Phandias",
-        example: "Blyenata! Metep schkol."
-      },
-      {
-        english: "i",
-        olonganes: "miy",
-        definition: "First-person singular subject pronoun.",
-        synonyms: "Miyla, Misi",
-        example: "Miy sontu khluppi."
-      }
+      { english: "hello", olonganes: "sturelik", definition: "A universal greeting...", synonyms: "Bogoda, Stu, Sturelikaniy", example: "Sturelik! Kome sontu vera?" },
+      { english: "goodbye", olonganes: "blyenata", definition: "A short-term farewell...", synonyms: "Blyeneti, Blavra, Bleva, Phandias", example: "Blyenata! Metep schkol." },
+      { english: "i", olonganes: "miy", definition: "First-person singular...", synonyms: "Miyla, Misi", example: "Miy sontu khluppi." },
+      // Thêm từ ở đây
     ];
 
+    // Khởi tạo uFuzzy
+    const uf = new uFuzzy({ blockPerms: 2, bound: true });
+
+    function findEntry(query) {
+      query = query.trim().toLowerCase();
+      if (!query) return null;
+
+      let exact = dictionary.find(w => w.english.toLowerCase() === query);
+      if (exact) return { entry: exact, exact: true };
+
+      let haystack = dictionary.map(w => w.english.toLowerCase());
+      let [ranges, indices, count] = uf.search(haystack, query);
+
+      if (count > 0) {
+        let bestIdx = indices[0];
+        return { entry: dictionary[bestIdx], exact: false };
+      }
+      return null;
+    }
+
+    function renderEntry(entry) {
+      return `<div class="entry">
+        <h2>${entry.olonganes}</h2>
+        <p><b>English:</b> ${entry.english}</p>
+        <p><b>Definition:</b> ${entry.definition}</p>
+        <p><b>Synonyms:</b> ${entry.synonyms}</p>
+        <p><b>Example:</b> ${entry.example}</p>
+      </div>`;
+    }
+
     function searchWord() {
-      const input = document.getElementById("search").value.trim().toLowerCase();
+      const input = document.getElementById("search").value.trim();
+      const resultDiv = document.getElementById("result");
+
       if (!input) {
-        document.getElementById("result").innerHTML = "<p style='color: orange;'>Please type a word.</p>";
+        resultDiv.innerHTML = "<p style='color: orange;'>Hãy nhập từ cần tìm nhé!</p>";
         return;
       }
 
-      const entry = dictionary.find(w => w.english.toLowerCase() === input);
-      document.getElementById("result").innerHTML = entry
-        ? `<div class="entry">
-            <h2>${entry.olonganes}</h2>
-            <p><b>English:</b> ${entry.english}</p>
-            <p><b>Definition:</b> ${entry.definition}</p>
-            <p><b>Synonyms:</b> ${entry.synonyms}</p>
-            <p><b>Example:</b> ${entry.example}</p>
-          </div>`
-        : `<p style='color: tomato;'>❌ No entry for "${input}"</p>`;
+      const found = findEntry(input);
+      if (found) {
+        resultDiv.innerHTML = renderEntry(found.entry);
+        if (!found.exact) {
+          resultDiv.innerHTML = `<p style='color: orange;'>Ý bạn là "${found.entry.english}" ?</p>` + resultDiv.innerHTML;
+        }
+      } else {
+        resultDiv.innerHTML = `<p style='color: tomato;'>❌ Không tìm thấy từ "${input}".</p>`;
+      }
     }
+
+    const searchInput = document.getElementById("search");
+    const suggestionsDiv = document.getElementById("suggestions");
+
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim().toLowerCase();
+      suggestionsDiv.innerHTML = "";
+      suggestionsDiv.style.display = "none";
+
+      if (query.length < 2) return;
+
+      let haystack = dictionary.map(w => w.english.toLowerCase());
+      let [ranges, indices] = uf.search(haystack, query);
+
+      if (indices && indices.length > 0) {
+        let html = "";
+        for (let i = 0; i < Math.min(8, indices.length); i++) {
+          let idx = indices[i];
+          let word = dictionary[idx].english;
+          let highlighted = uf.highlight(word, ranges[i * 2], ranges[i * 2 + 1], '<span class="highlight">', '</span>');
+          html += `<div class="suggestion-item" onclick="selectSuggestion('${word}')">${highlighted}</div>`;
+        }
+        suggestionsDiv.innerHTML = html;
+        suggestionsDiv.style.display = "block";
+      }
+    });
+
+    function selectSuggestion(word) {
+      searchInput.value = word;
+      suggestionsDiv.style.display = "none";
+      searchWord();
+    }
+
+    document.addEventListener("click", e => {
+      if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+        suggestionsDiv.style.display = "none";
+      }
+    });
 
     function toggleSettings() {
       const panel = document.getElementById("settingsPanel");
@@ -222,7 +206,6 @@
       localStorage.setItem("size", size);
     }
 
-    // Load saved settings
     window.addEventListener("load", () => {
       const contrast = localStorage.getItem("contrast") || "contrast-bow";
       const size = localStorage.getItem("size") || "size-standard";
@@ -230,9 +213,11 @@
       setSize(size);
     });
 
-    // Search by Enter key
-    document.getElementById("search").addEventListener("keydown", e => {
-      if (e.key === "Enter") searchWord();
+    searchInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        searchWord();
+      }
     });
   </script>
 
