@@ -4,10 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>English – Olonganes Dictionary</title>
-  <!-- Fuse.js CDN ổn định từ jsDelivr -->
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
   <style>
-    /* CSS giữ nguyên, chỉ thêm cho dropdown */
+    :root { --bg: #ffffff; --text: #000000; --panel-bg: #f8f8f8; --border: #333; }
+    body { margin: 0; padding: 20px; font-family: system-ui, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); transition: all 0.3s ease; }
+    .container { max-width: 720px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    h1 { margin: 0; font-size: 2rem; }
+    .search-bar { position: relative; display: flex; gap: 10px; margin-bottom: 24px; }
+    input#search { flex: 1; padding: 12px 16px; font-size: 1.1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+    button { padding: 12px 20px; font-size: 1rem; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
+    button:hover { background: rgba(0,0,0,0.08); }
+    #result { margin-top: 16px; }
+    .entry { background: var(--panel-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
+    .panel { display: none; margin-top: 16px; padding: 20px; background: var(--panel-bg); border: 2px solid var(--border); border-radius: 10px; animation: fadeIn 0.25s ease; }
+    .settings-btn { font-size: 1.8rem; background: transparent; border: none; cursor: pointer; padding: 8px; color: var(--text); }
+    body.contrast-bow { --bg: #ffffff; --text: #000000; --panel-bg: #f0f0f0; --border: #333; }
+    body.contrast-wob { --bg: #000000; --text: #ffffff; --panel-bg: #111111; --border: #ccc; }
+    body.contrast-yob { --bg: #000000; --text: #ffff00; --panel-bg: #1a1a00; --border: #ffff00; }
+    body.size-standard { font-size: 16px; }
+    body.size-large { font-size: 19px; }
+    body.size-xlarge { font-size: 22px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 500px) { .search-bar { flex-direction: column; } button { width: 100%; } }
+
+    /* CSS cho autocomplete suggestions */
     .suggestions {
       position: absolute;
       background: var(--panel-bg);
@@ -31,27 +52,33 @@
       font-weight: bold;
       background: rgba(255,255,0,0.3);
     }
-    :root { --bg: #ffffff; --text: #000000; --panel-bg: #f8f8f8; --border: #333; }
-    body { margin: 0; padding: 20px; font-family: system-ui, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); transition: all 0.3s ease; }
-    .container { max-width: 720px; margin: 0 auto; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    h1 { margin: 0; font-size: 2rem; }
-    .search-bar { position: relative; display: flex; gap: 10px; margin-bottom: 24px; }
-    input#search { flex: 1; padding: 12px 16px; font-size: 1.1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
-    button { padding: 12px 20px; font-size: 1rem; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
-    button:hover { background: rgba(0,0,0,0.08); }
-    #result { margin-top: 16px; }
-    .entry { background: var(--panel-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
-    .panel { display: none; margin-top: 16px; padding: 20px; background: var(--panel-bg); border: 2px solid var(--border); border-radius: 10px; animation: fadeIn 0.25s ease; }
-    .settings-btn { font-size: 1.8rem; background: transparent; border: none; cursor: pointer; padding: 8px; color: var(--text); }
-    body.contrast-bow { --bg: #ffffff; --text: #000000; --panel-bg: #f0f0f0; --border: #333; }
-    body.contrast-wob { --bg: #000000; --text: #ffffff; --panel-bg: #111111; --border: #ccc; }
-    body.contrast-yob { --bg: #000000; --text: #ffff00; --panel-bg: #1a1a00; --border: #ffff00; }
-    body.size-standard { font-size: 16px; }
-    body.size-large { font-size: 19px; }
-    body.size-xlarge { font-size: 22px; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 500px) { .search-bar { flex-direction: column; } button { width: 100%; } }
+
+    /* CSS cho history panel */
+    #historyPanel {
+      position: absolute;
+      right: 20px;
+      top: 60px;
+      width: 250px;
+      z-index: 20;
+      display: none;
+      background: var(--panel-bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    #historyList {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .history-item {
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .history-item:hover {
+      background: rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body class="contrast-bow size-standard">
@@ -60,7 +87,10 @@
 
     <header>
       <h1>English → Olonganes</h1>
-      <button class="settings-btn" onclick="toggleSettings()" title="Settings">⚙️</button>
+      <div style="display: flex; gap: 8px;">
+        <button class="settings-btn" onclick="toggleSettings()" title="Settings">⚙️</button>
+        <button class="settings-btn" onclick="toggleHistory()" title="Recent Searches">⏰</button>
+      </div>
     </header>
 
     <div class="search-bar">
@@ -73,6 +103,7 @@
 
     <div id="result"></div>
 
+    <!-- Settings Panel -->
     <div id="settingsPanel" class="panel">
       <h2>Settings</h2>
       <h3>Contrast Mode</h3>
@@ -87,51 +118,57 @@
       <button onclick="toggleSettings()">Close</button>
     </div>
 
+    <!-- History Panel -->
+    <div id="historyPanel" class="panel">
+      <h3>Recent Searches</h3>
+      <div id="historyList"></div>
+      <br>
+      <button onclick="clearHistory()" style="background: #ff4d4d; color: white;">Clear History</button>
+      <br><br>
+      <button onclick="toggleHistory()">Close</button>
+    </div>
+
   </div>
 
   <script>
-    // Dictionary mẫu
     const dictionary = [
-{
+      {
         english: "hello",
         olonganes: "sturelik",
         definition: "A universal greeting used in both formal and informal contexts.",
         synonyms: "Bogoda, Stu, Sturelikaniy",
-        example: "Sturelik! Kome sontu vera? (Hello! How are you?)"
+        example: "Sturelik! Kome sontu vera?"
       },
       {
         english: "goodbye",
         olonganes: "blyenata",
-        definition: "A short-term farewell expression, usually temporary.",
+        definition: "A short-term farewell expression.",
         synonyms: "Blyeneti, Blavra, Bleva, Phandias",
-        example: "Blyenata! Metep schkol. (Goodbye! See you again/Meet soon.)"
+        example: "Blyenata! Metep schkol."
       },
       {
         english: "i",
         olonganes: "miy",
         definition: "First-person singular subject pronoun.",
         synonyms: "Miyla, Misi",
-        example: "Miy sontu khluppi. (I am happy)"
+        example: "Miy sontu khluppi."
       }
     ];
-    
-    // Khởi tạo Fuse.js (rất nhanh và ổn định)
+
     const fuse = new Fuse(dictionary, {
       keys: ['english'],
-      threshold: 0.4,  // Độ nhạy fuzzy (0.0 = exact, 0.4 = cho phép sai khá nhiều)
+      threshold: 0.4,
       includeScore: true,
       shouldSort: true
     });
 
     function findEntry(query) {
-      query = query.trim();
+      query = query.trim().toLowerCase();
       if (!query) return null;
 
-      // Tìm exact trước
-      let exact = dictionary.find(w => w.english.toLowerCase() === query.toLowerCase());
+      let exact = dictionary.find(w => w.english.toLowerCase() === query);
       if (exact) return { entry: exact, exact: true };
 
-      // Fuzzy search
       let results = fuse.search(query);
       if (results.length > 0) {
         return { entry: results[0].item, exact: false };
@@ -154,7 +191,7 @@
       const resultDiv = document.getElementById("result");
 
       if (!input) {
-        resultDiv.innerHTML = "<p style='color: orange;'>Hãy nhập từ cần tìm nhé!</p>";
+        resultDiv.innerHTML = "<p>❌ Word not found.</p>";
         return;
       }
 
@@ -162,13 +199,15 @@
       if (found) {
         resultDiv.innerHTML = renderEntry(found.entry);
         if (!found.exact) {
-          resultDiv.innerHTML = `<p style='color: orange;'>Dumbshit! Do you mean "${found.entry.english}" ?</p>` + resultDiv.innerHTML;
+          resultDiv.innerHTML = `<p style="color: orange;">Did you mean: "${found.entry.english}"?</p>` + resultDiv.innerHTML;
         }
+        addToHistory(found.entry.english);
       } else {
-        resultDiv.innerHTML = `<p style='color: tomato;'>Dumbshit, no word found "${input}".</p>`;
+        resultDiv.innerHTML = "<p>❌ Word not found.</p>";
       }
     }
 
+    // Autocomplete
     const searchInput = document.getElementById("search");
     const suggestionsDiv = document.getElementById("suggestions");
 
@@ -184,7 +223,6 @@
         let html = "";
         for (let i = 0; i < Math.min(8, results.length); i++) {
           let word = results[i].item.english;
-          // Highlight đơn giản (Fuse không có highlight sẵn, mình làm thủ công)
           let highlighted = word.replace(new RegExp(query, 'gi'), match => `<span class="highlight">${match}</span>`);
           html += `<div class="suggestion-item" onclick="selectSuggestion('${word}')">${highlighted}</div>`;
         }
@@ -205,7 +243,58 @@
       }
     });
 
-    // Các hàm settings giữ nguyên
+    // Lịch sử tìm kiếm
+    let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+
+    function saveRecentSearches() {
+      localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    }
+
+    function addToHistory(word) {
+      if (!word) return;
+      if (recentSearches.length > 0 && recentSearches[0] === word) return;
+      recentSearches.unshift(word);
+      if (recentSearches.length > 20) {
+        recentSearches.pop();
+      }
+      saveRecentSearches();
+    }
+
+    function renderHistory() {
+      const listDiv = document.getElementById('historyList');
+      listDiv.innerHTML = '';
+      if (recentSearches.length === 0) {
+        listDiv.innerHTML = '<p>No recent searches yet.</p>';
+        return;
+      }
+      recentSearches.forEach(word => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.textContent = word;
+        item.onclick = () => {
+          document.getElementById('search').value = word;
+          searchWord();
+          toggleHistory();
+        };
+        listDiv.appendChild(item);
+      });
+    }
+
+    function clearHistory() {
+      recentSearches = [];
+      saveRecentSearches();
+      renderHistory();
+    }
+
+    function toggleHistory() {
+      const panel = document.getElementById('historyPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+      if (panel.style.display === 'block') {
+        renderHistory();
+      }
+    }
+
+    // Settings functions
     function toggleSettings() {
       const panel = document.getElementById("settingsPanel");
       panel.style.display = panel.style.display === "block" ? "none" : "block";
