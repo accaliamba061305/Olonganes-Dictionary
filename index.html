@@ -111,44 +111,51 @@ body.size-very-large { font-size: 24px; }
 
 /* ============ CONTRAST ============ */
 /* =========================
-   GLOBAL FORCE COLOR TARGETS
+   GLOBAL COLOR NORMALIZATION
    ========================= */
-h1, h2, h3, p, span, label, 
+h1, h2, h3, p, span, label,
 button, input, textarea,
-#result, #meaning, #output,
-.description {
+#result, #meaning, #output {
   color: inherit;
 }
 
-/* placeholder color follows contrast */
 input::placeholder {
   opacity: 1;
 }
 
 /* =========================
-   BLACK ON WHITE (default)
+   BLACK ON WHITE (contrast-bow)
    ========================= */
 body.contrast-bow {
-  background: white;
-  color: black;
+  background: #ffffff;
+  color: #000000;
 }
 
 body.contrast-bow input,
 body.contrast-bow button {
-  background: white;
-  border: 1px solid black;
+  background: #ffffff;
+  border: 1px solid #000000;
 }
 
 body.contrast-bow input::placeholder {
-  color: black;
+  color: #000000;
+}
+
+/* panels */
+body.contrast-bow #meaning,
+body.contrast-bow #settingsMain,
+body.contrast-bow #contrastPanel,
+body.contrast-bow #textPanel {
+  background: #f0f0f0;
+  border: 2px solid #000000;
 }
 
 /* =========================
-   WHITE ON BLACK
+   WHITE ON BLACK (contrast-wob)
    ========================= */
 body.contrast-wob {
-  background: black;
-  color: white;
+  background: #000000;
+  color: #ffffff;
 }
 
 body.contrast-wob h1,
@@ -160,27 +167,35 @@ body.contrast-wob label,
 body.contrast-wob button,
 body.contrast-wob input,
 body.contrast-wob #result,
-body.contrast-wob #meaning,
-body.contrast-wob .description {
-  color: white !important;
+body.contrast-wob #meaning {
+  color: #ffffff !important;
 }
 
 body.contrast-wob input,
 body.contrast-wob button {
-  background: black;
-  border: 1px solid white;
+  background: #000000;
+  border: 1px solid #ffffff;
 }
 
 body.contrast-wob input::placeholder {
-  color: white;
+  color: #ffffff;
+}
+
+/* panels */
+body.contrast-wob #meaning,
+body.contrast-wob #settingsMain,
+body.contrast-wob #contrastPanel,
+body.contrast-wob #textPanel {
+  background: #111111;
+  border: 2px solid #ffffff;
 }
 
 /* =========================
-   YELLOW ON BLACK
+   YELLOW ON BLACK (contrast-yob)
    ========================= */
 body.contrast-yob {
-  background: black;
-  color: yellow;
+  background: #000000;
+  color: #ffff00;
 }
 
 body.contrast-yob h1,
@@ -192,20 +207,40 @@ body.contrast-yob label,
 body.contrast-yob button,
 body.contrast-yob input,
 body.contrast-yob #result,
-body.contrast-yob #meaning,
-body.contrast-yob .description {
-  color: yellow !important;
+body.contrast-yob #meaning {
+  color: #ffff00 !important;
 }
 
 body.contrast-yob input,
 body.contrast-yob button {
-  background: black;
-  border: 1px solid yellow;
+  background: #000000;
+  border: 1px solid #ffff00;
 }
 
 body.contrast-yob input::placeholder {
-  color: yellow;
+  color: #ffff00;
 }
+
+/* panels */
+body.contrast-yob #meaning,
+body.contrast-yob #settingsMain,
+body.contrast-yob #contrastPanel,
+body.contrast-yob #textPanel {
+  background: #1a1a00;
+  border: 2px solid #ffff00;
+}
+
+/* =========================
+   PANEL POLISH (shared)
+   ========================= */
+#meaning,
+#settingsMain,
+#contrastPanel,
+#textPanel {
+  padding: 12px;
+  border-radius: 8px;
+}
+
 
 
 /* ============ ANIMATION ============ */
