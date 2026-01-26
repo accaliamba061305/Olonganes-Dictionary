@@ -110,32 +110,103 @@ body.size-large { font-size: 20px; }
 body.size-very-large { font-size: 24px; }
 
 /* ============ CONTRAST ============ */
+/* =========================
+   GLOBAL FORCE COLOR TARGETS
+   ========================= */
+h1, h2, h3, p, span, label, 
+button, input, textarea,
+#result, #meaning, #output,
+.description {
+  color: inherit;
+}
 
-/* Black on White */
+/* placeholder color follows contrast */
+input::placeholder {
+  opacity: 1;
+}
+
+/* =========================
+   BLACK ON WHITE (default)
+   ========================= */
 body.contrast-bow {
-  background: #ffffff;
-  color: #000;
+  background: white;
+  color: black;
 }
 
-/* White on Black */
+body.contrast-bow input,
+body.contrast-bow button {
+  background: white;
+  border: 1px solid black;
+}
+
+body.contrast-bow input::placeholder {
+  color: black;
+}
+
+/* =========================
+   WHITE ON BLACK
+   ========================= */
 body.contrast-wob {
-  background: #000000;
-  color: #ffffff;
+  background: black;
+  color: white;
 }
 
-body.contrast-wob .entry {
-  background: #111;
+body.contrast-wob h1,
+body.contrast-wob h2,
+body.contrast-wob h3,
+body.contrast-wob p,
+body.contrast-wob span,
+body.contrast-wob label,
+body.contrast-wob button,
+body.contrast-wob input,
+body.contrast-wob #result,
+body.contrast-wob #meaning,
+body.contrast-wob .description {
+  color: white !important;
 }
 
-/* Yellow on Black */
+body.contrast-wob input,
+body.contrast-wob button {
+  background: black;
+  border: 1px solid white;
+}
+
+body.contrast-wob input::placeholder {
+  color: white;
+}
+
+/* =========================
+   YELLOW ON BLACK
+   ========================= */
 body.contrast-yob {
-  background: #000000;
-  color: #ffeb3b;
+  background: black;
+  color: yellow;
 }
 
-body.contrast-yob .entry {
-  background: #111;
+body.contrast-yob h1,
+body.contrast-yob h2,
+body.contrast-yob h3,
+body.contrast-yob p,
+body.contrast-yob span,
+body.contrast-yob label,
+body.contrast-yob button,
+body.contrast-yob input,
+body.contrast-yob #result,
+body.contrast-yob #meaning,
+body.contrast-yob .description {
+  color: yellow !important;
 }
+
+body.contrast-yob input,
+body.contrast-yob button {
+  background: black;
+  border: 1px solid yellow;
+}
+
+body.contrast-yob input::placeholder {
+  color: yellow;
+}
+
 
 /* ============ ANIMATION ============ */
 
