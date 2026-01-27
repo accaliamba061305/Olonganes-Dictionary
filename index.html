@@ -11,7 +11,8 @@
     .container { max-width: 720px; margin: 0 auto; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     h1 { margin: 0; font-size: 2rem; }
-    .search-bar { position: relative; display: flex; gap: 10px; margin-bottom: 24px; }
+    .search-bar { position: relative; display: flex; gap: 10px; margin-bottom: 24px; align-items: center; }
+    .direction-select { padding: 10px; font-size: 1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--panel-bg); color: var(--text); }
     input#search { flex: 1; padding: 12px 16px; font-size: 1.1rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
     button { padding: 12px 20px; font-size: 1rem; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
     button:hover { background: rgba(0,0,0,0.08); }
@@ -28,51 +29,25 @@
     body.size-large { font-size: 19px; }
     body.size-xlarge { font-size: 22px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 500px) { .search-bar { flex-direction: column; } button { width: 100%; } }
+    @media (max-width: 500px) { .search-bar { flex-direction: column; } button { width: 100%; } .direction-select { width: 100%; } }
 
-    /* Suggestions */
-    .suggestions {
+    .suggestions, #historyPanel, #bookmarkPanel {
       position: absolute;
       background: var(--panel-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       max-height: 250px;
       overflow-y: auto;
-      width: calc(100% - 80px);
       z-index: 10;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       display: none;
     }
-    .suggestion-item { padding: 10px 16px; cursor: pointer; }
-    .suggestion-item:hover, .suggestion-item.active { background: rgba(0,0,0,0.1); }
+    .suggestions { width: calc(100% - 80px); }
+    .suggestion-item, .history-item, .bookmark-item { padding: 10px 16px; cursor: pointer; }
+    .suggestion-item:hover, .history-item:hover, .bookmark-item:hover { background: rgba(0,0,0,0.1); }
     .highlight { font-weight: bold; background: rgba(255,255,0,0.3); }
-
-    /* History & Bookmark panels */
-    #historyPanel, #bookmarkPanel {
-      position: absolute;
-      right: 20px;
-      top: 60px;
-      width: 280px;
-      z-index: 20;
-      display: none;
-      background: var(--panel-bg);
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    #historyList, #bookmarkList {
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .history-item, .bookmark-item {
-      padding: 8px;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-    .history-item:hover, .bookmark-item:hover {
-      background: rgba(0,0,0,0.1);
-    }
+    #historyPanel, #bookmarkPanel { right: 20px; top: 60px; width: 280px; padding: 16px; }
+    #historyList, #bookmarkList { max-height: 200px; overflow-y: auto; }
   </style>
 </head>
 <body class="contrast-bow size-standard">
@@ -89,8 +64,12 @@
     </header>
 
     <div class="search-bar">
+      <select id="searchDirection" class="direction-select">
+        <option value="en-to-ol">English → Olonganes</option>
+        <option value="ol-to-en">Olonganes → English</option>
+      </select>
       <div style="position: relative; flex: 1;">
-        <input type="text" id="search" placeholder="Enter English word (e.g. hello)" autocomplete="off">
+        <input type="text" id="search" placeholder="Enter word..." autocomplete="off">
         <div id="suggestions" class="suggestions"></div>
       </div>
       <button onclick="searchWord()">Search</button>
@@ -160,20 +139,24 @@
       }
     ];
 
-    const fuse = new Fuse(dictionary, {
-      keys: ['english'],
-      threshold: 0.4,
-      includeScore: true,
-      shouldSort: true
-    });
+    let fuseEn = new Fuse(dictionary, { keys: ['english'], threshold: 0.4, includeScore: true, shouldSort: true });
+    let fuseOl = new Fuse(dictionary, { keys: ['olonganes'], threshold: 0.4, includeScore: true, shouldSort: true });
+
+    function getFuse() {
+      const direction = document.getElementById('searchDirection').value;
+      return direction === 'en-to-ol' ? fuseEn : fuseOl;
+    }
 
     function findEntry(query) {
-      query = query.trim().toLowerCase();
+      query = query.trim();
       if (!query) return null;
 
-      let exact = dictionary.find(w => w.english.toLowerCase() === query);
+      const direction = document.getElementById('searchDirection').value;
+      const key = direction === 'en-to-ol' ? 'english' : 'olonganes';
+      const exact = dictionary.find(w => w[key].toLowerCase() === query.toLowerCase());
       if (exact) return { entry: exact, exact: true };
 
+      const fuse = getFuse();
       let results = fuse.search(query);
       if (results.length > 0) {
         return { entry: results[0].item, exact: false };
@@ -183,6 +166,8 @@
 
     function renderEntry(entry) {
       const isBookmarked = bookmarks.some(b => b.english === entry.english);
+      const direction = document.getElementById('searchDirection').value;
+      const originalWord = direction === 'ol-to-en' ? entry.olonganes : entry.english;
       return `<div class="entry">
         <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${entry.english}')">★</button>
         <h2>${entry.olonganes}</h2>
@@ -208,13 +193,13 @@
         if (!found.exact) {
           resultDiv.innerHTML = `<p style="color: orange;">Did you mean: "${found.entry.english}"?</p>` + resultDiv.innerHTML;
         }
-        addToHistory(found.entry.english);
+        addToHistory(found.entry.english);  // Luôn lưu English làm key
       } else {
         resultDiv.innerHTML = "<p>❌ Word not found.</p>";
       }
     }
 
-    // Autocomplete (giữ nguyên)
+    // Autocomplete theo hướng
     const searchInput = document.getElementById("search");
     const suggestionsDiv = document.getElementById("suggestions");
 
@@ -225,11 +210,12 @@
 
       if (query.length < 2) return;
 
+      const fuse = getFuse();
       let results = fuse.search(query);
       if (results.length > 0) {
         let html = "";
         for (let i = 0; i < Math.min(8, results.length); i++) {
-          let word = results[i].item.english;
+          let word = results[i].item[document.getElementById('searchDirection').value === 'en-to-ol' ? 'english' : 'olonganes'];
           let highlighted = word.replace(new RegExp(query, 'gi'), match => `<span class="highlight">${match}</span>`);
           html += `<div class="suggestion-item" onclick="selectSuggestion('${word}')">${highlighted}</div>`;
         }
@@ -252,8 +238,9 @@
       }
     });
 
-    // Lịch sử tìm kiếm (giữ nguyên)
+    // Lịch sử, Bookmark giữ nguyên (lưu English)
     let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
     function addToHistory(word) {
       if (!word) return;
@@ -295,30 +282,20 @@
       if (panel.style.display === 'block') renderHistory();
     }
 
-    // Bookmark
-    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-
     function toggleBookmark(englishWord) {
       const entry = dictionary.find(w => w.english === englishWord);
       if (!entry) return;
 
       const index = bookmarks.findIndex(b => b.english === englishWord);
       if (index === -1) {
-        // Add
         bookmarks.unshift(entry);
         if (bookmarks.length > 50) bookmarks.pop();
       } else {
-        // Remove
         bookmarks.splice(index, 1);
       }
       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-
-      // Refresh result để cập nhật nút ★
       searchWord();
-      // Nếu đang mở bookmark panel thì refresh list
-      if (document.getElementById('bookmarkPanel').style.display === 'block') {
-        renderBookmarks();
-      }
+      if (document.getElementById('bookmarkPanel').style.display === 'block') renderBookmarks();
     }
 
     function renderBookmarks() {
@@ -345,7 +322,7 @@
       bookmarks = [];
       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
       renderBookmarks();
-      searchWord(); // Refresh entry để cập nhật ★
+      searchWord();
     }
 
     function toggleBookmarks() {
@@ -354,7 +331,6 @@
       if (panel.style.display === 'block') renderBookmarks();
     }
 
-    // Settings
     function toggleSettings() {
       const panel = document.getElementById("settingsPanel");
       panel.style.display = panel.style.display === "block" ? "none" : "block";
@@ -377,6 +353,7 @@
       const size = localStorage.getItem("size") || "size-standard";
       setContrast(contrast);
       setSize(size);
+      // Load direction nếu có (tùy chọn)
     });
 
     searchInput.addEventListener("keydown", e => {
@@ -384,6 +361,12 @@
         e.preventDefault();
         searchWord();
       }
+    });
+
+    // Cập nhật autocomplete khi đổi hướng
+    document.getElementById('searchDirection').addEventListener('change', () => {
+      suggestionsDiv.style.display = "none";
+      searchInput.placeholder = document.getElementById('searchDirection').value === 'en-to-ol' ? "Enter English word..." : "Enter Olonganes word...";
     });
   </script>
 
