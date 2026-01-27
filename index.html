@@ -82,8 +82,6 @@
 
     <div id="result"></div>
 
-    <!-- Các panel settings, history, bookmark giữ nguyên như trước -->
-
     <!-- Settings Panel -->
     <div id="settingsPanel" class="panel">
       <h2>Settings</h2>
@@ -154,8 +152,10 @@
       document.getElementById('loading').innerHTML = 'Đang tải lại từ điển...';
       document.getElementById('loading').style.display = 'block';
       document.getElementById('result').innerHTML = '';
+      document.getElementById('suggestions').innerHTML = '';
+      document.getElementById('suggestions').style.display = 'none';
       await loadDictionary();
-      document.getElementById('loading').innerHTML = 'Đã tải lại từ điển!';
+      document.getElementById('loading').innerHTML = 'Đã tải lại từ điển thành công!';
       setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
       }, 2000);
@@ -216,9 +216,156 @@
       }
     }
 
-    // Autocomplete, history, bookmark giữ nguyên như trước (mình rút gọn để code ngắn)
+    // Autocomplete
+    const searchInput = document.getElementById("search");
+    const suggestionsDiv = document.getElementById("suggestions");
 
-    // ... (dán phần JS autocomplete, history, bookmark, settings từ file cũ của bạn vào đây, mình không copy lại để tránh dài dòng)
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim();
+      suggestionsDiv.innerHTML = "";
+      suggestionsDiv.style.display = "none";
+
+      if (query.length < 2) return;
+
+      const fuse = getFuse();
+      let results = fuse.search(query);
+      if (results.length > 0) {
+        let html = "";
+        for (let i = 0; i < Math.min(8, results.length); i++) {
+          let word = results[i].item[document.getElementById('searchDirection').value === 'en-to-ol' ? 'english' : 'olonganes'];
+          let highlighted = word.replace(new RegExp(query, 'gi'), match => `<span class="highlight">${match}</span>`);
+          html += `<div class="suggestion-item" onclick="selectSuggestion('${word}')">${highlighted}</div>`;
+        }
+        suggestionsDiv.innerHTML = html;
+        suggestionsDiv.style.display = "block";
+      }
+    });
+
+    function selectSuggestion(word) {
+      searchInput.value = word;
+      suggestionsDiv.style.display = "none";
+      searchWord();
+    }
+
+    document.addEventListener("click", e => {
+      if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target) &&
+          !document.getElementById('historyPanel').contains(e.target) &&
+          !document.getElementById('bookmarkPanel').contains(e.target)) {
+        suggestionsDiv.style.display = "none";
+      }
+    });
+
+    // Lịch sử tìm kiếm
+    let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+
+    function addToHistory(word) {
+      if (!word) return;
+      if (recentSearches.length > 0 && recentSearches[0] === word) return;
+      recentSearches.unshift(word);
+      if (recentSearches.length > 20) recentSearches.pop();
+      localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    }
+
+    function renderHistory() {
+      const listDiv = document.getElementById('historyList');
+      listDiv.innerHTML = '';
+      if (recentSearches.length === 0) {
+        listDiv.innerHTML = '<p>No recent searches yet.</p>';
+        return;
+      }
+      recentSearches.forEach(word => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.textContent = word;
+        item.onclick = () => {
+          document.getElementById('search').value = word;
+          searchWord();
+          toggleHistory();
+        };
+        listDiv.appendChild(item);
+      });
+    }
+
+    function clearHistory() {
+      recentSearches = [];
+      localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+      renderHistory();
+    }
+
+    function toggleHistory() {
+      const panel = document.getElementById('historyPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+      if (panel.style.display === 'block') renderHistory();
+    }
+
+    // Bookmark
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
+    function toggleBookmark(englishWord) {
+      const entry = dictionary.find(w => w.english === englishWord);
+      if (!entry) return;
+
+      const index = bookmarks.findIndex(b => b.english === englishWord);
+      if (index === -1) {
+        bookmarks.unshift(entry);
+        if (bookmarks.length > 50) bookmarks.pop();
+      } else {
+        bookmarks.splice(index, 1);
+      }
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+      searchWord();
+      if (document.getElementById('bookmarkPanel').style.display === 'block') renderBookmarks();
+    }
+
+    function renderBookmarks() {
+      const listDiv = document.getElementById('bookmarkList');
+      listDiv.innerHTML = '';
+      if (bookmarks.length === 0) {
+        listDiv.innerHTML = '<p>No bookmarks yet.</p>';
+        return;
+      }
+      bookmarks.forEach(entry => {
+        const item = document.createElement('div');
+        item.className = 'bookmark-item';
+        item.textContent = entry.english;
+        item.onclick = () => {
+          document.getElementById('search').value = entry.english;
+          searchWord();
+          toggleBookmarks();
+        };
+        listDiv.appendChild(item);
+      });
+    }
+
+    function clearBookmarks() {
+      bookmarks = [];
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+      renderBookmarks();
+      searchWord();
+    }
+
+    function toggleBookmarks() {
+      const panel = document.getElementById('bookmarkPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+      if (panel.style.display === 'block') renderBookmarks();
+    }
+
+    function toggleSettings() {
+      const panel = document.getElementById("settingsPanel");
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
+    }
+
+    function setContrast(mode) {
+      document.body.classList.remove("contrast-bow", "contrast-wob", "contrast-yob");
+      document.body.classList.add(mode);
+      localStorage.setItem("contrast", mode);
+    }
+
+    function setSize(size) {
+      document.body.classList.remove("size-standard", "size-large", "size-xlarge");
+      document.body.classList.add(size);
+      localStorage.setItem("size", size);
+    }
 
     window.addEventListener("load", async () => {
       const contrast = localStorage.getItem("contrast") || "contrast-bow";
@@ -229,10 +376,17 @@
       await loadDictionary();
     });
 
-    // Các hàm toggleSettings, setContrast, setSize, toggleHistory, clearHistory, toggleBookmarks, clearBookmarks... giữ nguyên
+    searchInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        searchWord();
+      }
+    });
 
-    // ... (dán phần còn lại từ file cũ)
-
+    document.getElementById('searchDirection').addEventListener('change', () => {
+      suggestionsDiv.style.display = "none";
+      searchInput.placeholder = document.getElementById('searchDirection').value === 'en-to-ol' ? "Enter English word..." : "Enter Olonganes word...";
+    });
   </script>
 
 </body>
