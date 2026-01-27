@@ -59,7 +59,7 @@
       <h1>English → Olonganes</h1>
       <div style="display: flex; gap: 8px;">
         <button class="settings-btn" onclick="toggleSettings()" title="Settings">⚙️</button>
-        <button class="settings-btn" onclick="toggleHistory()" title="Recent Searches">⏰</button>
+        <button class="settings-btn" onclick="toggleHistory()" title="Recent Searches">📜</button>
         <button class="settings-btn" onclick="toggleBookmarks()" title="Bookmarks">⭐</button>
       </div>
     </header>
@@ -187,7 +187,7 @@
       const resultDiv = document.getElementById("result");
 
       if (!input) {
-        resultDiv.innerHTML = "<p>❌ Word not found.</p>";
+        resultDiv.innerHTML = "<p>Dumbshit, Word not found.</p>";
         return;
       }
 
@@ -199,7 +199,7 @@
         }
         addToHistory(found.entry.english);
       } else {
-        resultDiv.innerHTML = "<p>❌ Word not found.</p>";
+        resultDiv.innerHTML = "<p>Dumbshit, Word not found.</p>";
       }
     }
 
