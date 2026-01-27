@@ -19,5 +19,60 @@
     "definition": "First-person singular subject pronoun.",
     "synonyms": "Miyla, Misi",
     "example": "Miy sontu khluppi."
+  },
+  {
+    "english": "sorry",
+    "olonganes": "lemstrathma / lemsan",
+    "definition": "An expression of regret or apology. 'Lemstrathma' is used for more serious offenses, while 'lemsan' is a casual version for minor social slips."
+  },
+  {
+    "english": "excuse me",
+    "olonganes": "poschuldi miy",
+    "definition": "A polite phrase used to capture someone's attention, pass through a crowded space, or apologize for a minor interruption in a formal manner."
+  },
+  {
+    "english": "please",
+    "olonganes": "bles / pozhalestonova",
+    "definition": "An adverb used to make a request more polite. 'Bles' is the shortened common form, while 'pozhalestonova' is the highly formal and traditional version."
+  },
+  {
+    "english": "you",
+    "olonganes": "vera",
+    "definition": "Second-person singular pronoun used for addressing one individual directly. It is neutral and can be used in most social settings."
+  },
+  {
+    "english": "he",
+    "olonganes": "el",
+    "definition": "Third-person singular masculine pronoun used to refer to a male person or an entity identified as masculine."
+  },
+  {
+    "english": "she",
+    "olonganes": "comp",
+    "definition": "Third-person singular feminine pronoun used to refer to a female person or an entity identified as feminine."
+  },
+  {
+    "english": "it",
+    "olonganes": "et",
+    "definition": "Third-person singular neuter pronoun used for objects, animals, or concepts that do not have a specific gender."
+  },
+  {
+    "english": "we",
+    "olonganes": "vil",
+    "definition": "First-person plural pronoun representing a group that includes the speaker and at least one other person."
+  },
+  {
+    "english": "they",
+    "olonganes": "den",
+    "definition": "Third-person plural pronoun used to refer to two or more people or things previously mentioned or easily identified."
+  },
+  {
+    "english": "you (plural)",
+    "olonganes": "motal",
+    "definition": "Second-person plural pronoun used when addressing a group of two or more people simultaneously."
+  },
+  {
+    "english": "sir / ma'am",
+    "olonganes": "sher",
+    "definition": "A formal title of respect and honorific used to address or refer to a person of status or a stranger in a polite way, regardless of gender."
   }
 ]
