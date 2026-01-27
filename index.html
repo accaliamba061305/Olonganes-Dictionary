@@ -16,7 +16,9 @@
     button { padding: 12px 20px; font-size: 1rem; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text); }
     button:hover { background: rgba(0,0,0,0.08); }
     #result { margin-top: 16px; }
-    .entry { background: var(--panel-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
+    .entry { background: var(--panel-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); position: relative; }
+    .bookmark-btn { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; background: transparent; border: none; cursor: pointer; color: #ccc; }
+    .bookmark-btn.bookmarked { color: gold; }
     .panel { display: none; margin-top: 16px; padding: 20px; background: var(--panel-bg); border: 2px solid var(--border); border-radius: 10px; animation: fadeIn 0.25s ease; }
     .settings-btn { font-size: 1.8rem; background: transparent; border: none; cursor: pointer; padding: 8px; color: var(--text); }
     body.contrast-bow { --bg: #ffffff; --text: #000000; --panel-bg: #f0f0f0; --border: #333; }
@@ -28,7 +30,7 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @media (max-width: 500px) { .search-bar { flex-direction: column; } button { width: 100%; } }
 
-    /* CSS cho autocomplete suggestions */
+    /* Suggestions */
     .suggestions {
       position: absolute;
       background: var(--panel-bg);
@@ -41,24 +43,16 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       display: none;
     }
-    .suggestion-item {
-      padding: 10px 16px;
-      cursor: pointer;
-    }
-    .suggestion-item:hover, .suggestion-item.active {
-      background: rgba(0,0,0,0.1);
-    }
-    .highlight {
-      font-weight: bold;
-      background: rgba(255,255,0,0.3);
-    }
+    .suggestion-item { padding: 10px 16px; cursor: pointer; }
+    .suggestion-item:hover, .suggestion-item.active { background: rgba(0,0,0,0.1); }
+    .highlight { font-weight: bold; background: rgba(255,255,0,0.3); }
 
-    /* CSS cho history panel */
-    #historyPanel {
+    /* History & Bookmark panels */
+    #historyPanel, #bookmarkPanel {
       position: absolute;
       right: 20px;
       top: 60px;
-      width: 250px;
+      width: 280px;
       z-index: 20;
       display: none;
       background: var(--panel-bg);
@@ -67,16 +61,16 @@
       padding: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
-    #historyList {
+    #historyList, #bookmarkList {
       max-height: 200px;
       overflow-y: auto;
     }
-    .history-item {
+    .history-item, .bookmark-item {
       padding: 8px;
       cursor: pointer;
       border-radius: 6px;
     }
-    .history-item:hover {
+    .history-item:hover, .bookmark-item:hover {
       background: rgba(0,0,0,0.1);
     }
   </style>
@@ -90,6 +84,7 @@
       <div style="display: flex; gap: 8px;">
         <button class="settings-btn" onclick="toggleSettings()" title="Settings">⚙️</button>
         <button class="settings-btn" onclick="toggleHistory()" title="Recent Searches">⏰</button>
+        <button class="settings-btn" onclick="toggleBookmarks()" title="Bookmarks">⭐</button>
       </div>
     </header>
 
@@ -126,6 +121,16 @@
       <button onclick="clearHistory()" style="background: #ff4d4d; color: white;">Clear History</button>
       <br><br>
       <button onclick="toggleHistory()">Close</button>
+    </div>
+
+    <!-- Bookmark Panel -->
+    <div id="bookmarkPanel" class="panel">
+      <h3>Bookmarks</h3>
+      <div id="bookmarkList"></div>
+      <br>
+      <button onclick="clearBookmarks()" style="background: #ff4d4d; color: white;">Clear Bookmarks</button>
+      <br><br>
+      <button onclick="toggleBookmarks()">Close</button>
     </div>
 
   </div>
@@ -177,7 +182,9 @@
     }
 
     function renderEntry(entry) {
+      const isBookmarked = bookmarks.some(b => b.english === entry.english);
       return `<div class="entry">
+        <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${entry.english}')">★</button>
         <h2>${entry.olonganes}</h2>
         <p><b>English:</b> ${entry.english}</p>
         <p><b>Definition:</b> ${entry.definition}</p>
@@ -207,7 +214,7 @@
       }
     }
 
-    // Autocomplete
+    // Autocomplete (giữ nguyên)
     const searchInput = document.getElementById("search");
     const suggestionsDiv = document.getElementById("suggestions");
 
@@ -238,26 +245,22 @@
     }
 
     document.addEventListener("click", e => {
-      if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+      if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target) &&
+          !document.getElementById('historyPanel').contains(e.target) &&
+          !document.getElementById('bookmarkPanel').contains(e.target)) {
         suggestionsDiv.style.display = "none";
       }
     });
 
-    // Lịch sử tìm kiếm
+    // Lịch sử tìm kiếm (giữ nguyên)
     let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
-
-    function saveRecentSearches() {
-      localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-    }
 
     function addToHistory(word) {
       if (!word) return;
       if (recentSearches.length > 0 && recentSearches[0] === word) return;
       recentSearches.unshift(word);
-      if (recentSearches.length > 20) {
-        recentSearches.pop();
-      }
-      saveRecentSearches();
+      if (recentSearches.length > 20) recentSearches.pop();
+      localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
     }
 
     function renderHistory() {
@@ -282,19 +285,76 @@
 
     function clearHistory() {
       recentSearches = [];
-      saveRecentSearches();
+      localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
       renderHistory();
     }
 
     function toggleHistory() {
       const panel = document.getElementById('historyPanel');
       panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-      if (panel.style.display === 'block') {
-        renderHistory();
+      if (panel.style.display === 'block') renderHistory();
+    }
+
+    // Bookmark
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
+    function toggleBookmark(englishWord) {
+      const entry = dictionary.find(w => w.english === englishWord);
+      if (!entry) return;
+
+      const index = bookmarks.findIndex(b => b.english === englishWord);
+      if (index === -1) {
+        // Add
+        bookmarks.unshift(entry);
+        if (bookmarks.length > 50) bookmarks.pop();
+      } else {
+        // Remove
+        bookmarks.splice(index, 1);
+      }
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+
+      // Refresh result để cập nhật nút ★
+      searchWord();
+      // Nếu đang mở bookmark panel thì refresh list
+      if (document.getElementById('bookmarkPanel').style.display === 'block') {
+        renderBookmarks();
       }
     }
 
-    // Settings functions
+    function renderBookmarks() {
+      const listDiv = document.getElementById('bookmarkList');
+      listDiv.innerHTML = '';
+      if (bookmarks.length === 0) {
+        listDiv.innerHTML = '<p>No bookmarks yet.</p>';
+        return;
+      }
+      bookmarks.forEach(entry => {
+        const item = document.createElement('div');
+        item.className = 'bookmark-item';
+        item.textContent = entry.english;
+        item.onclick = () => {
+          document.getElementById('search').value = entry.english;
+          searchWord();
+          toggleBookmarks();
+        };
+        listDiv.appendChild(item);
+      });
+    }
+
+    function clearBookmarks() {
+      bookmarks = [];
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+      renderBookmarks();
+      searchWord(); // Refresh entry để cập nhật ★
+    }
+
+    function toggleBookmarks() {
+      const panel = document.getElementById('bookmarkPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+      if (panel.style.display === 'block') renderBookmarks();
+    }
+
+    // Settings
     function toggleSettings() {
       const panel = document.getElementById("settingsPanel");
       panel.style.display = panel.style.display === "block" ? "none" : "block";
