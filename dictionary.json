@@ -74,5 +74,215 @@
     "english": "sir / ma'am",
     "olonganes": "sher",
     "definition": "A formal title of respect and honorific used to address or refer to a person of status or a stranger in a polite way, regardless of gender."
+  },
+  {
+    "english": "thorax",
+    "olonganes": "thelenaks",
+    "part_of_speech": "n",
+    "definition": "The middle part of the body between the neck and the abdomen, specifically referring to the chest cavity in anatomical contexts."
+  },
+  {
+    "english": "ribcage",
+    "olonganes": "skonte-caneve",
+    "part_of_speech": "n",
+    "definition": "The bony structure of the chest that encloses and protects the vital organs like the heart and lungs."
+  },
+  {
+    "english": "shrank (lower leg)",
+    "olonganes": "canchelev",
+    "part_of_speech": "n",
+    "definition": "The part of the leg between the knee and the ankle; the lower limb section primarily responsible for support during movement."
+  },
+  {
+    "english": "throat",
+    "olonganes": "kelemonuitiv",
+    "part_of_speech": "n",
+    "definition": "The passage which leads from the back of the mouth of a person or animal to the esophagus and lungs."
+  },
+  {
+    "english": "stance",
+    "olonganes": "comundan",
+    "part_of_speech": "n",
+    "definition": "A physical way of standing or a mental attitude/position on a particular issue."
+  },
+  {
+    "english": "view",
+    "olonganes": "phaligis",
+    "part_of_speech": "n",
+    "definition": "The ability to see something or a particular scene or landscape that can be seen from a specific point."
+  },
+  {
+    "english": "perspective",
+    "olonganes": "posumponi",
+    "part_of_speech": "n",
+    "definition": "A particular attitude toward or way of regarding something; a point of view that influences understanding."
+  },
+  {
+    "english": "opinion",
+    "olonganes": "itina",
+    "part_of_speech": "n",
+    "definition": "A view or judgment formed about something, not necessarily based on fact or knowledge."
+  },
+  {
+    "english": "point of view",
+    "olonganes": "phaligis / breumazen",
+    "part_of_speech": "n",
+    "definition": "The position from which something or someone is observed; can be used for both physical and philosophical outlooks."
+  },
+  {
+    "english": "uxorcide",
+    "olonganes": "luv-kalemanien",
+    "part_of_speech": "n",
+    "definition": "The specific and grave act of killing one's own wife."
+  },
+  {
+    "english": "harbour",
+    "olonganes": "duschipgaran",
+    "part_of_speech": "n",
+    "definition": "A place on the coast where vessels may find shelter, especially one protected from rough water by piers or jetties."
+  },
+  {
+    "english": "harbour",
+    "olonganes": "kalameten",
+    "part_of_speech": "v",
+    "definition": "The act of giving shelter or refuge to someone; or to keep a thought or feeling (typically a negative one) in one's mind."
+  },
+  {
+    "english": "articulate",
+    "olonganes": "giedahothen",
+    "part_of_speech": "v",
+    "definition": "The ability to express an idea or feeling fluently and coherently in speech or writing."
+  },
+  {
+    "english": "designate",
+    "olonganes": "comudesturen",
+    "part_of_speech": "v",
+    "definition": "To officially assign a specified status or name to something or someone."
+  },
+  {
+    "english": "condemn",
+    "olonganes": "balablush",
+    "part_of_speech": "v",
+    "definition": "To express complete disapproval of; to sentence someone to a particular punishment, especially death."
+  },
+  {
+    "english": "sentiment",
+    "olonganes": "slavatorunen",
+    "part_of_speech": "n",
+    "definition": "A view of or attitude toward a situation or event; an opinion prompted by feeling rather than reason."
+  },
+  {
+    "english": "adjacent",
+    "olonganes": "demanth",
+    "part_of_speech": "adj",
+    "definition": "Next to or adjoining something else; sharing a common border or wall."
+  },
+  {
+    "english": "tenure",
+    "olonganes": "salavaperi",
+    "part_of_speech": "n",
+    "definition": "The conditions under which land or buildings are held or occupied; or the period of time during which an office or position is held."
+  },
+  {
+    "english": "undertake",
+    "olonganes": "vludumo",
+    "part_of_speech": "v",
+    "definition": "To commit oneself to and begin a task or enterprise; to take on a responsibility."
+  },
+  {
+    "english": "take responsibility",
+    "olonganes": "entirusanz",
+    "part_of_speech": "v",
+    "definition": "The active process of accepting the consequences of one's actions or being the person in charge of a duty."
+  },
+  {
+    "english": "invoke",
+    "olonganes": "sited",
+    "part_of_speech": "v",
+    "definition": "To cite or appeal to someone or something as an authority for an action or in support of an argument."
+  },
+  {
+    "english": "preside",
+    "olonganes": "lamdebosch",
+    "part_of_speech": "v",
+    "definition": "To be in the position of authority in a meeting or a court of law; to exercise control or guidance."
+  },
+  {
+    "english": "subsidy",
+    "olonganes": "zupporameno",
+    "part_of_speech": "n",
+    "definition": "A sum of money granted by the government or a public body to assist an industry or business."
+  },
+  {
+    "english": "wood / timber",
+    "olonganes": "vunth",
+    "part_of_speech": "n",
+    "definition": "The hard fibrous material that forms the main substance of the trunk or branches of a tree, used for fuel or timber."
+  },
+  {
+    "english": "forest",
+    "olonganes": "vunthendli",
+    "part_of_speech": "n",
+    "definition": "A large area covered chiefly with trees and undergrowth; a collection of 'vunth' on a grand scale."
+  },
+  {
+    "english": "incentive",
+    "olonganes": "evestano",
+    "part_of_speech": "n",
+    "definition": "A thing that motivates or encourages one to do something; a reward offered for increased productivity."
+  },
+  {
+    "english": "motivation",
+    "olonganes": "colomentadenion",
+    "part_of_speech": "n",
+    "definition": "The reason or reasons one has for acting or behaving in a particular way; the internal drive to achieve a goal."
+  },
+  {
+    "english": "prevalence",
+    "olonganes": "pevenopa",
+    "part_of_speech": "n",
+    "definition": "The quality or state of being widespread or common in a particular area or at a particular time."
+  },
+  {
+    "english": "population",
+    "olonganes": "stuwendagli",
+    "part_of_speech": "n",
+    "definition": "All the inhabitants of a particular town, area, or country."
+  },
+  {
+    "english": "petition",
+    "olonganes": "koduymeras",
+    "part_of_speech": "n",
+    "definition": "A formal written request, typically one signed by many people, appealing to authority with respect to a particular cause."
+  },
+  {
+    "english": "conceited",
+    "olonganes": "levanogish",
+    "part_of_speech": "adj",
+    "definition": "Excessively proud of oneself; vain and showing an overly high opinion of one's own appearance or abilities."
+  },
+  {
+    "english": "virtue",
+    "olonganes": "manaleaura",
+    "part_of_speech": "n",
+    "definition": "Behavior showing high moral standards; a quality considered morally good or desirable in a person."
+  },
+  {
+    "english": "compel",
+    "olonganes": "dalastriken",
+    "part_of_speech": "v",
+    "definition": "To force or oblige someone to do something through authority or necessity."
+  },
+  {
+    "english": "atrocity",
+    "olonganes": "nelev",
+    "part_of_speech": "n",
+    "definition": "An extremely wicked or cruel act, typically one involving physical violence or injury."
+  },
+  {
+    "english": "fertility",
+    "olonganes": "dakrapamamiy",
+    "part_of_speech": "n",
+    "definition": "The quality of being fertile; the ability to conceive children or young; or the productiveness of soil."
   }
 ]
