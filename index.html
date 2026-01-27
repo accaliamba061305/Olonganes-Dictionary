@@ -48,6 +48,7 @@
     .highlight { font-weight: bold; background: rgba(255,255,0,0.3); }
     #historyPanel, #bookmarkPanel { right: 20px; top: 60px; width: 280px; padding: 16px; }
     #historyList, #bookmarkList { max-height: 200px; overflow-y: auto; }
+    #loading { text-align: center; font-size: 1.2rem; color: orange; margin: 20px 0; }
   </style>
 </head>
 <body class="contrast-bow size-standard">
@@ -63,7 +64,9 @@
       </div>
     </header>
 
-    <div class="search-bar">
+    <div id="loading">Đang tải từ điển... (có thể mất vài giây nếu từ điển lớn)</div>
+
+    <div class="search-bar" style="display: none;" id="searchBar">
       <select id="searchDirection" class="direction-select">
         <option value="en-to-ol">English → Olonganes</option>
         <option value="ol-to-en">Olonganes → English</option>
@@ -115,32 +118,35 @@
   </div>
 
   <script>
-    const dictionary = [
-      {
-        english: "hello",
-        olonganes: "sturelik",
-        definition: "A universal greeting used in both formal and informal contexts.",
-        synonyms: "Bogoda, Stu, Sturelikaniy",
-        example: "Sturelik! Kome sontu vera?"
-      },
-      {
-        english: "goodbye",
-        olonganes: "blyenata",
-        definition: "A short-term farewell expression.",
-        synonyms: "Blyeneti, Blavra, Bleva, Phandias",
-        example: "Blyenata! Metep schkol."
-      },
-      {
-        english: "i",
-        olonganes: "miy",
-        definition: "First-person singular subject pronoun.",
-        synonyms: "Miyla, Misi",
-        example: "Miy sontu khluppi."
-      }
-    ];
+    let dictionary = [];
+    let fuseEn, fuseOl;
 
-    let fuseEn = new Fuse(dictionary, { keys: ['english'], threshold: 0.4, includeScore: true, shouldSort: true });
-    let fuseOl = new Fuse(dictionary, { keys: ['olonganes'], threshold: 0.4, includeScore: true, shouldSort: true });
+    async function loadDictionary() {
+      try {
+        const response = await fetch('dictionary.json');
+        if (!response.ok) throw new Error('Không tìm thấy dictionary.json');
+        dictionary = await response.json();
+
+        // Khởi tạo Fuse cho hai hướng
+        fuseEn = new Fuse(dictionary, { keys: ['english'], threshold: 0.4, includeScore: true, shouldSort: true });
+        fuseOl = new Fuse(dictionary, { keys: ['olonganes'], threshold: 0.4, includeScore: true, shouldSort: true });
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('searchBar').style.display = 'flex';
+      } catch (error) {
+        console.error(error);
+        document.getElementById('loading').innerHTML = '<p style="color: tomato;">Lỗi tải từ điển. Sử dụng từ điển mẫu nhỏ.</p>';
+        // Fallback dictionary mẫu
+        dictionary = [
+          { english: "hello", olonganes: "sturelik", definition: "A universal greeting...", synonyms: "Bogoda, Stu, Sturelikaniy", example: "Sturelik! Kome sontu vera?" },
+          { english: "goodbye", olonganes: "blyenata", definition: "A short-term farewell...", synonyms: "Blyeneti, Blavra, Bleva, Phandias", example: "Blyenata! Metep schkol." },
+          { english: "i", olonganes: "miy", definition: "First-person singular...", synonyms: "Miyla, Misi", example: "Miy sontu khluppi." }
+        ];
+        fuseEn = new Fuse(dictionary, { keys: ['english'], threshold: 0.4, includeScore: true, shouldSort: true });
+        fuseOl = new Fuse(dictionary, { keys: ['olonganes'], threshold: 0.4, includeScore: true, shouldSort: true });
+        document.getElementById('searchBar').style.display = 'flex';
+      }
+    }
 
     function getFuse() {
       const direction = document.getElementById('searchDirection').value;
@@ -166,8 +172,6 @@
 
     function renderEntry(entry) {
       const isBookmarked = bookmarks.some(b => b.english === entry.english);
-      const direction = document.getElementById('searchDirection').value;
-      const originalWord = direction === 'ol-to-en' ? entry.olonganes : entry.english;
       return `<div class="entry">
         <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${entry.english}')">★</button>
         <h2>${entry.olonganes}</h2>
@@ -193,13 +197,13 @@
         if (!found.exact) {
           resultDiv.innerHTML = `<p style="color: orange;">Did you mean: "${found.entry.english}"?</p>` + resultDiv.innerHTML;
         }
-        addToHistory(found.entry.english);  // Luôn lưu English làm key
+        addToHistory(found.entry.english);
       } else {
         resultDiv.innerHTML = "<p>❌ Word not found.</p>";
       }
     }
 
-    // Autocomplete theo hướng
+    // Autocomplete
     const searchInput = document.getElementById("search");
     const suggestionsDiv = document.getElementById("suggestions");
 
@@ -238,9 +242,8 @@
       }
     });
 
-    // Lịch sử, Bookmark giữ nguyên (lưu English)
+    // Lịch sử tìm kiếm
     let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
-    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
     function addToHistory(word) {
       if (!word) return;
@@ -281,6 +284,9 @@
       panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
       if (panel.style.display === 'block') renderHistory();
     }
+
+    // Bookmark
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
     function toggleBookmark(englishWord) {
       const entry = dictionary.find(w => w.english === englishWord);
@@ -331,6 +337,7 @@
       if (panel.style.display === 'block') renderBookmarks();
     }
 
+    // Settings
     function toggleSettings() {
       const panel = document.getElementById("settingsPanel");
       panel.style.display = panel.style.display === "block" ? "none" : "block";
@@ -348,12 +355,13 @@
       localStorage.setItem("size", size);
     }
 
-    window.addEventListener("load", () => {
+    window.addEventListener("load", async () => {
       const contrast = localStorage.getItem("contrast") || "contrast-bow";
       const size = localStorage.getItem("size") || "size-standard";
       setContrast(contrast);
       setSize(size);
-      // Load direction nếu có (tùy chọn)
+
+      await loadDictionary(); // Load JSON đầu tiên
     });
 
     searchInput.addEventListener("keydown", e => {
@@ -363,7 +371,6 @@
       }
     });
 
-    // Cập nhật autocomplete khi đổi hướng
     document.getElementById('searchDirection').addEventListener('change', () => {
       suggestionsDiv.style.display = "none";
       searchInput.placeholder = document.getElementById('searchDirection').value === 'en-to-ol' ? "Enter English word..." : "Enter Olonganes word...";
