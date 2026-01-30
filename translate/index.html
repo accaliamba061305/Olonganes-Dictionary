@@ -11,6 +11,7 @@
       --primary: #2196F3;
       --accent: #4CAF50;
       --border: #ddd;
+      --gray: #777;
     }
     body.dark {
       --bg: #121212;
@@ -18,6 +19,7 @@
       --primary: #64B5F6;
       --accent: #81C784;
       --border: #444;
+      --gray: #aaa;
     }
     body {
       font-family: system-ui, sans-serif;
@@ -34,12 +36,39 @@
       text-align: center;
       position: relative;
     }
-    header h1 { margin: 0; }
-    .back { position: absolute; left: 15px; top: 15px; color: white; text-decoration: none; font-weight: bold; }
-    main { max-width: 800px; margin: 30px auto; padding: 20px; }
+    header h1 { margin: 0; font-size: 1.8em; }
+    .back { position: absolute; left: 15px; top: 18px; color: white; text-decoration: none; font-weight: bold; }
+    main { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+    .lang-select {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    select, .swap-btn {
+      padding: 10px 15px;
+      font-size: 1em;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .swap-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 1.2em;
+    }
+    .input-area, .output-area {
+      position: relative;
+      margin-bottom: 20px;
+    }
     textarea {
       width: 100%;
-      height: 150px;
+      height: 160px;
       padding: 15px;
       font-size: 1.1em;
       border: 1px solid var(--border);
@@ -47,27 +76,44 @@
       background: var(--bg);
       color: var(--text);
       resize: vertical;
+      box-sizing: border-box;
+    }
+    .char-count {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 0.85em;
+      color: var(--gray);
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 15px 0;
     }
     button {
-      display: block;
-      margin: 15px auto;
-      padding: 12px 30px;
-      font-size: 1.1em;
-      background: var(--accent);
-      color: white;
+      padding: 10px 20px;
+      font-size: 1em;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
+      transition: opacity 0.2s;
     }
+    #translateBtn { background: var(--accent); color: white; }
+    #copyBtn, #clearBtn { background: var(--gray); color: white; }
     button:hover { opacity: 0.9; }
     #output {
-      padding: 20px;
+      width: 100%;
+      min-height: 160px;
+      padding: 15px;
+      font-size: 1.1em;
       border: 1px solid var(--border);
       border-radius: 8px;
-      min-height: 100px;
       background: rgba(0,0,0,0.03);
       white-space: pre-wrap;
+      word-wrap: break-word;
     }
+    #loading { display: none; text-align: center; color: var(--primary); font-style: italic; margin: 10px 0; }
   </style>
 </head>
 <body>
@@ -76,19 +122,103 @@
     <a href="../" class="back">← Back to Dictionary</a>
   </header>
   <main>
-    <textarea id="input" placeholder="Nhập văn bản tiếng Anh cần dịch sang Olonganes..."></textarea>
-    <button id="translateBtn">Dịch ngay</button>
-    <div id="output">Kết quả dịch sẽ hiện ở đây...</div>
+    <div class="lang-select">
+      <select id="fromLang">
+        <option value="en">English</option>
+        <option value="ol">Olonganes</option>
+      </select>
+      <button class="swap-btn" id="swapBtn">↔</button>
+      <select id="toLang">
+        <option value="ol">Olonganes</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
+    <div class="input-area">
+      <textarea id="input" placeholder="Nhập văn bản cần dịch..."></textarea>
+      <div class="char-count" id="charCount">0 / 5000</div>
+    </div>
+
+    <div class="actions">
+      <button id="translateBtn">Dịch ngay</button>
+      <button id="clearBtn">Xóa</button>
+    </div>
+
+    <div id="loading">Đang dịch...</div>
+
+    <div class="output-area">
+      <div id="output">Kết quả dịch sẽ hiện ở đây...</div>
+      <div class="actions">
+        <button id="copyBtn">Copy kết quả</button>
+      </div>
+    </div>
   </main>
+
   <script>
-    document.getElementById('translateBtn').addEventListener('click', () => {
-      const input = document.getElementById('input').value.trim();
-      const output = document.getElementById('output');
-      if (!input) {
-        output.textContent = 'Vui lòng nhập văn bản nhé!';
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const fromLang = document.getElementById('fromLang');
+    const toLang = document.getElementById('toLang');
+    const swapBtn = document.getElementById('swapBtn');
+    const translateBtn = document.getElementById('translateBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const charCount = document.getElementById('charCount');
+    const loading = document.getElementById('loading');
+
+    // Sync hai select (luôn ngược nhau)
+    fromLang.addEventListener('change', () => {
+      toLang.value = fromLang.value === 'en' ? 'ol' : 'en';
+    });
+    toLang.addEventListener('change', () => {
+      fromLang.value = toLang.value === 'en' ? 'ol' : 'en';
+    });
+
+    // Swap
+    swapBtn.addEventListener('click', () => {
+      const temp = fromLang.value;
+      fromLang.value = toLang.value;
+      toLang.value = temp;
+    });
+
+    // Character counter
+    input.addEventListener('input', () => {
+      const len = input.value.length;
+      charCount.textContent = `${len} / 5000`;
+      if (len > 5000) charCount.style.color = 'red';
+      else charCount.style.color = 'var(--gray)';
+    });
+
+    // Dịch (placeholder - sau thay bằng API)
+    translateBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (!text) {
+        output.textContent = 'Vui lòng nhập văn bản!';
         return;
       }
-      output.textContent = 'Đang dịch... (API sẽ thêm sau)\n\nPlaceholder ví dụ: ' + input + ' → [Phiên bản Olonganes]';
+      loading.style.display = 'block';
+      output.textContent = '';
+
+      setTimeout(() => {  // Giả lập delay 1s
+        loading.style.display = 'none';
+        const direction = fromLang.value === 'en' ? 'EN → OL' : 'OL → EN';
+        output.textContent = `(${direction}) Đang dùng placeholder:\n\n` + text.split('').reverse().join('') + ' [dịch mẫu]';
+      }, 1000);
+    });
+
+    // Clear
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      output.textContent = 'Kết quả dịch sẽ hiện ở đây...';
+      charCount.textContent = '0 / 5000';
+    });
+
+    // Copy
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(output.textContent).then(() => {
+        copyBtn.textContent = 'Đã copy!';
+        setTimeout(() => { copyBtn.textContent = 'Copy kết quả'; }, 2000);
+      });
     });
   </script>
 </body>
