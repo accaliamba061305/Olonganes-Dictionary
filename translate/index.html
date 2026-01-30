@@ -4,56 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Olonganes Translator</title>
-  <!-- Nếu từ điển dùng Google Fonts hoặc CDN, copy link font vào đây -->
-  <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"> -->
   <style>
     :root {
       --bg: #ffffff;
-      --text: #333333;
-      --primary: #007bff;
-      --secondary: #6c757d;
-      --accent: #28a745;
-      --border: #dee2e6;
+      --text: #333;
+      --primary: #2196F3;
+      --accent: #4CAF50;
+      --border: #ddd;
     }
     body.dark {
       --bg: #121212;
       --text: #e0e0e0;
-      --primary: #4da6ff;
-      --secondary: #adb5bd;
-      --border: #343a40;
+      --primary: #64B5F6;
+      --accent: #81C784;
+      --border: #444;
     }
     body {
-      font-family: 'Roboto', system-ui, sans-serif;
+      font-family: system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       margin: 0;
       padding: 0;
-      line-height: 1.6;
+      min-height: 100vh;
     }
     header {
       background: var(--primary);
       color: white;
-      padding: 15px 20px;
+      padding: 15px;
       text-align: center;
       position: relative;
     }
-    header h1 { margin: 0; font-size: 1.8em; }
-    .back-link {
-      position: absolute;
-      left: 20px;
-      top: 20px;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    main {
-      max-width: 800px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
+    header h1 { margin: 0; }
+    .back { position: absolute; left: 15px; top: 15px; color: white; text-decoration: none; font-weight: bold; }
+    main { max-width: 800px; margin: 30px auto; padding: 20px; }
     textarea {
       width: 100%;
-      min-height: 150px;
+      height: 150px;
       padding: 15px;
       font-size: 1.1em;
       border: 1px solid var(--border);
@@ -61,67 +47,49 @@
       background: var(--bg);
       color: var(--text);
       resize: vertical;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     button {
       display: block;
-      width: 100%;
-      max-width: 300px;
       margin: 15px auto;
-      padding: 12px;
+      padding: 12px 30px;
       font-size: 1.1em;
       background: var(--accent);
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: background 0.3s;
     }
-    button:hover { background: #218838; }
+    button:hover { opacity: 0.9; }
     #output {
-      margin-top: 20px;
       padding: 20px;
-      background: rgba(0,0,0,0.03);
       border: 1px solid var(--border);
       border-radius: 8px;
-      min-height: 120px;
+      min-height: 100px;
+      background: rgba(0,0,0,0.03);
       white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-    @media (max-width: 600px) {
-      header h1 { font-size: 1.5em; }
-      main { padding: 0 15px; }
     }
   </style>
 </head>
-<body> <!-- Thêm class="dark" nếu muốn test dark mode -->
+<body>
   <header>
     <h1>Olonganes Translator</h1>
-    <a href="../" class="back-link">← Back to Dictionary</a>
+    <a href="../" class="back">← Back to Dictionary</a>
   </header>
   <main>
     <textarea id="input" placeholder="Nhập văn bản tiếng Anh cần dịch sang Olonganes..."></textarea>
     <button id="translateBtn">Dịch ngay</button>
-    <div id="output">Kết quả sẽ hiện ở đây sau khi bạn nhấn nút...</div>
+    <div id="output">Kết quả dịch sẽ hiện ở đây...</div>
   </main>
-  <!-- Footer copy từ từ điển nếu có, ví dụ stats hoặc credit -->
-  <footer style="text-align:center; padding:20px; color:var(--secondary); font-size:0.9em;">
-    © Olonganes Dictionary & Translator | Data from dictionary.json
-  </footer>
-
   <script>
-    // JS tạm cho button (sẽ thay API sau)
     document.getElementById('translateBtn').addEventListener('click', () => {
       const input = document.getElementById('input').value.trim();
       const output = document.getElementById('output');
       if (!input) {
-        output.innerHTML = '<strong style="color:red;">Vui lòng nhập văn bản nhé!</strong>';
+        output.textContent = 'Vui lòng nhập văn bản nhé!';
         return;
       }
-      output.innerHTML = 'Đang dịch... (API sẽ được thêm sau)<br><br><em>Ví dụ placeholder:</em><br>' + input.split(' ').reverse().join(' ') + ' → [Olonganes version]';
+      output.textContent = 'Đang dịch... (API sẽ thêm sau)\n\nPlaceholder ví dụ: ' + input + ' → [Phiên bản Olonganes]';
     });
-
-    // Nếu từ điển có dark mode toggle, copy logic đó vào đây để sync
   </script>
 </body>
 </html>
