@@ -2,24 +2,41 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Olonganes Translator</title>
-  <link rel="stylesheet" href="../styles.css">  <!-- link CSS chung từ root -->
+  <link rel="stylesheet" href="../styles.css">  <!-- Nếu styles.css ở root, sẽ load -->
+  <style>
+    body { font-family: sans-serif; margin: 20px; background: #f8f9fa; color: #333; }
+    header { text-align: center; margin-bottom: 20px; }
+    textarea, button { width: 100%; max-width: 600px; margin: 10px auto; display: block; padding: 10px; font-size: 16px; }
+    button { background: #007bff; color: white; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    #output { margin-top: 20px; padding: 15px; background: white; border: 1px solid #ddd; min-height: 100px; white-space: pre-wrap; }
+  </style> <!-- fallback style nếu CSS chưa load -->
 </head>
 <body>
   <header>
     <h1>Olonganes Translator</h1>
     <a href="../">← Back to Dictionary</a>
-    <!-- copy settings icon nếu có -->
   </header>
   <main>
-    <textarea id="input" placeholder="Nhập văn bản cần dịch..."></textarea>
+    <textarea id="input" rows="6" placeholder="Nhập văn bản cần dịch..."></textarea>
     <button id="translateBtn">Dịch sang Olonganes</button>
-    <div id="output"></div>
+    <div id="output">Kết quả dịch sẽ hiện ở đây...</div>
   </main>
-  <!-- copy footer -->
-  <script src="../main.js"></script>  <!-- nếu có JS chung -->
+  <!-- Nếu có footer chung, copy paste vào đây -->
+  <script src="../main.js"></script>  <!-- Nếu có JS chung -->
   <script>
-    // code fetch API dịch ở đây sau
+    // Phần JS dịch tạm thời (sẽ thay bằng API sau)
+    document.getElementById('translateBtn').addEventListener('click', function() {
+      const input = document.getElementById('input').value.trim();
+      if (!input) {
+        document.getElementById('output').innerText = 'Vui lòng nhập văn bản!';
+        return;
+      }
+      // Placeholder: sau này fetch API thực
+      document.getElementById('output').innerText = 'Đang dịch... (chưa có API)\n\nVí dụ: ' + input.toUpperCase() + ' → [Dịch sang Olonganes]';
+    });
   </script>
 </body>
 </html>
