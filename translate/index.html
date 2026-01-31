@@ -12,6 +12,7 @@
       --accent: #4CAF50;
       --border: #ddd;
       --gray: #777;
+      --error: #f44336;
     }
     body.dark {
       --bg: #121212;
@@ -21,99 +22,25 @@
       --border: #444;
       --gray: #aaa;
     }
-    body {
-      font-family: system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    header {
-      background: var(--primary);
-      color: white;
-      padding: 15px;
-      text-align: center;
-      position: relative;
-    }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; }
+    header { background: var(--primary); color: white; padding: 15px; text-align: center; position: relative; }
     header h1 { margin: 0; font-size: 1.8em; }
     .back { position: absolute; left: 15px; top: 18px; color: white; text-decoration: none; font-weight: bold; }
     main { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-    .lang-select {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-    select, .swap-btn {
-      padding: 10px 15px;
-      font-size: 1em;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--bg);
-      color: var(--text);
-      cursor: pointer;
-    }
-    .swap-btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      font-size: 1.2em;
-    }
-    .input-area, .output-area {
-      position: relative;
-      margin-bottom: 20px;
-    }
-    textarea {
-      width: 100%;
-      height: 160px;
-      padding: 15px;
-      font-size: 1.1em;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-      resize: vertical;
-      box-sizing: border-box;
-    }
-    .char-count {
-      position: absolute;
-      bottom: 8px;
-      right: 12px;
-      font-size: 0.85em;
-      color: var(--gray);
-    }
-    .actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 15px 0;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 1em;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
+    .lang-select { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+    select, .swap-btn { padding: 10px 15px; font-size: 1em; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); cursor: pointer; }
+    .swap-btn { background: var(--primary); color: white; border: none; font-size: 1.2em; }
+    .input-area, .output-area { position: relative; margin-bottom: 20px; }
+    textarea { width: 100%; height: 160px; padding: 15px; font-size: 1.1em; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); resize: vertical; box-sizing: border-box; }
+    .char-count { position: absolute; bottom: 8px; right: 12px; font-size: 0.85em; color: var(--gray); }
+    .actions { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
+    button { padding: 10px 20px; font-size: 1em; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; }
     #translateBtn { background: var(--accent); color: white; }
     #copyBtn, #clearBtn { background: var(--gray); color: white; }
     button:hover { opacity: 0.9; }
-    #output {
-      width: 100%;
-      min-height: 160px;
-      padding: 15px;
-      font-size: 1.1em;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: rgba(0,0,0,0.03);
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
+    #output { width: 100%; min-height: 160px; padding: 15px; font-size: 1.1em; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,0.03); white-space: pre-wrap; word-wrap: break-word; }
     #loading { display: none; text-align: center; color: var(--primary); font-style: italic; margin: 10px 0; }
+    .not-found { color: var(--error); font-weight: bold; }
   </style>
 </head>
 <body>
@@ -135,19 +62,19 @@
     </div>
 
     <div class="input-area">
-      <textarea id="input" placeholder="Nhập văn bản cần dịch..."></textarea>
+      <textarea id="input" placeholder="Nhập từ/cụm từ cần dịch... (sẽ tra trong từ điển)"></textarea>
       <div class="char-count" id="charCount">0 / 5000</div>
     </div>
 
     <div class="actions">
-      <button id="translateBtn">Dịch ngay</button>
+      <button id="translateBtn">Tra cứu & Dịch</button>
       <button id="clearBtn">Xóa</button>
     </div>
 
-    <div id="loading">Đang dịch...</div>
+    <div id="loading">Đang tra cứu trong từ điển...</div>
 
     <div class="output-area">
-      <div id="output">Kết quả dịch sẽ hiện ở đây...</div>
+      <div id="output">Kết quả sẽ hiện ở đây (từ dictionary.json)...</div>
       <div class="actions">
         <button id="copyBtn">Copy kết quả</button>
       </div>
@@ -155,6 +82,20 @@
   </main>
 
   <script>
+    let dictionary = []; // sẽ load dữ liệu từ JSON
+
+    // Load dictionary.json khi page mở (từ root)
+    fetch('../dictionary.json')
+      .then(response => response.json())
+      .then(data => {
+        dictionary = data; // giả định là array [{english: "...", olonganes: "...", ...}]
+        console.log('Dictionary loaded:', dictionary.length, 'entries');
+      })
+      .catch(err => {
+        console.error('Lỗi load dictionary:', err);
+        document.getElementById('output').innerHTML = '<span class="not-found">Không load được từ điển! Kiểm tra dictionary.json.</span>';
+      });
+
     const input = document.getElementById('input');
     const output = document.getElementById('output');
     const fromLang = document.getElementById('fromLang');
@@ -166,58 +107,81 @@
     const charCount = document.getElementById('charCount');
     const loading = document.getElementById('loading');
 
-    // Sync hai select (luôn ngược nhau)
-    fromLang.addEventListener('change', () => {
-      toLang.value = fromLang.value === 'en' ? 'ol' : 'en';
-    });
-    toLang.addEventListener('change', () => {
-      fromLang.value = toLang.value === 'en' ? 'ol' : 'en';
-    });
+    // Sync hai select
+    fromLang.addEventListener('change', () => toLang.value = fromLang.value === 'en' ? 'ol' : 'en');
+    toLang.addEventListener('change', () => fromLang.value = toLang.value === 'en' ? 'ol' : 'en');
 
     // Swap
     swapBtn.addEventListener('click', () => {
-      const temp = fromLang.value;
-      fromLang.value = toLang.value;
-      toLang.value = temp;
+      [fromLang.value, toLang.value] = [toLang.value, fromLang.value];
     });
 
-    // Character counter
+    // Char count
     input.addEventListener('input', () => {
-      const len = input.value.length;
+      const len = input.value.trim().length;
       charCount.textContent = `${len} / 5000`;
-      if (len > 5000) charCount.style.color = 'red';
-      else charCount.style.color = 'var(--gray)';
+      charCount.style.color = len > 5000 ? 'red' : 'var(--gray)';
     });
 
-    // Dịch (placeholder - sau thay bằng API)
+    // Tra cứu từ điển
     translateBtn.addEventListener('click', () => {
-      const text = input.value.trim();
+      const text = input.value.trim().toLowerCase(); // normalize
       if (!text) {
-        output.textContent = 'Vui lòng nhập văn bản!';
+        output.textContent = 'Vui lòng nhập từ/cụm từ!';
         return;
       }
+      if (dictionary.length === 0) {
+        output.innerHTML = '<span class="not-found">Từ điển chưa load xong hoặc lỗi!</span>';
+        return;
+      }
+
       loading.style.display = 'block';
       output.textContent = '';
 
-      setTimeout(() => {  // Giả lập delay 1s
+      setTimeout(() => { // giả lập delay nhỏ
         loading.style.display = 'none';
-        const direction = fromLang.value === 'en' ? 'EN → OL' : 'OL → EN';
-        output.textContent = `(${direction}) Đang dùng placeholder:\n\n` + text.split('').reverse().join('') + ' [dịch mẫu]';
-      }, 1000);
+
+        const isEnToOl = fromLang.value === 'en';
+        let result = '';
+        let found = false;
+
+        // Tìm exact match (có thể cải tiến fuzzy sau)
+        for (const entry of dictionary) {
+          const source = isEnToOl ? entry.english?.toLowerCase() : entry.olonganes?.toLowerCase();
+          const target = isEnToOl ? entry.olonganes : entry.english;
+
+          if (source === text || source.includes(text)) { // match exact hoặc chứa
+            result += `**${isEnToOl ? entry.english : entry.olonganes}** → **${target}**\n`;
+            if (entry.type) result += `Loại: ${entry.type}\n`;
+            if (entry.definition) result += `Định nghĩa: ${entry.definition}\n`;
+            if (entry.examples) result += `Ví dụ: ${entry.examples.join(' | ')}\n`;
+            result += '\n';
+            found = true;
+            // break; // nếu chỉ muốn 1 kết quả đầu, uncomment
+          }
+        }
+
+        if (!found) {
+          output.innerHTML = `<span class="not-found">Không tìm thấy "${text}" trong từ điển.</span>\n\nGợi ý: Thử nhập từ đơn giản hơn hoặc kiểm tra chính tả.`;
+        } else {
+          output.innerHTML = result || 'Kết quả tra cứu:\n' + result;
+        }
+      }, 800);
     });
 
     // Clear
     clearBtn.addEventListener('click', () => {
       input.value = '';
-      output.textContent = 'Kết quả dịch sẽ hiện ở đây...';
+      output.textContent = 'Kết quả sẽ hiện ở đây (từ dictionary.json)...';
       charCount.textContent = '0 / 5000';
     });
 
     // Copy
     copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(output.textContent).then(() => {
+      const textToCopy = output.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
         copyBtn.textContent = 'Đã copy!';
-        setTimeout(() => { copyBtn.textContent = 'Copy kết quả'; }, 2000);
+        setTimeout(() => copyBtn.textContent = 'Copy kết quả', 2000);
       });
     });
   </script>
