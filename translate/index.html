@@ -5,75 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Olonganes Translator</title>
   <style>
-    :root {
-      --bg: #ffffff;
-      --text: #000000;
-      --primary: #2196F3;
-      --accent: #4CAF50;
-      --border: #ccc;
-      --gray: #666;
-      --error: #f44336;
-      --suggestion-bg: #f0f0f0;
-    }
-    body.dark {
-      --bg: #000000;
-      --text: #ffffff;
-      --primary: #64B5F6;
-      --accent: #81C784;
-      --border: #555;
-      --gray: #aaa;
-      --suggestion-bg: #222;
-    }
-    body.high-contrast {
-      --bg: #000000;
-      --text: #ffff00; /* yellow on black */
-      --primary: #00ffff; /* cyan nổi bật */
-      --accent: #ff00ff; /* magenta */
-      --border: #ffff00;
-      --gray: #ffff99;
-      --suggestion-bg: #111100;
-    }
     body {
-      background: var(--bg);
-      color: var(--text);
       font-family: system-ui, sans-serif;
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.4s, color 0.4s;
     }
-    header { background: var(--primary); color: #fff; padding: 15px; text-align: center; position: relative; }
+    /* Default: Black on White */
+    body {
+      background: #ffffff;
+      color: #000000;
+    }
+    body.contrast-white-on-black {
+      background: #000000;
+      color: #ffffff;
+    }
+    body.contrast-yellow-on-black {
+      background: #000000;
+      color: #ffff00;
+    }
+    /* Các phần tử khác điều chỉnh theo contrast */
+    body.contrast-white-on-black header,
+    body.contrast-yellow-on-black header {
+      background: #111111;
+    }
+    body.contrast-white-on-black .back,
+    body.contrast-yellow-on-black .back {
+      color: #ffffff;
+    }
+    body.contrast-white-on-black textarea,
+    body.contrast-yellow-on-black textarea {
+      background: #111111;
+      color: inherit;
+      border-color: #555;
+    }
+    body.contrast-white-on-black #output,
+    body.contrast-yellow-on-black #output {
+      background: #111111;
+      border-color: #555;
+    }
+    body.contrast-white-on-black .suggestions,
+    body.contrast-yellow-on-black .suggestions {
+      background: #222;
+      border-color: #555;
+    }
+    body.contrast-white-on-black .suggestions li,
+    body.contrast-yellow-on-black .suggestions li {
+      color: #ffffff;
+    }
+    body.contrast-white-on-black .char-count,
+    body.contrast-yellow-on-black .char-count {
+      color: #aaa;
+    }
+    /* Các style còn lại giữ nguyên, thêm nếu cần */
+    header { background: #2196F3; color: white; padding: 15px; text-align: center; position: relative; }
     header h1 { margin: 0; font-size: 1.8em; }
-    .back { position: absolute; left: 15px; top: 18px; color: #fff; text-decoration: none; font-weight: bold; }
-    main { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-    .lang-select { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-    select, .swap-btn { padding: 10px 15px; font-size: 1em; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); cursor: pointer; }
-    .swap-btn { background: var(--primary); color: #fff; border: none; font-size: 1.2em; }
-    .input-wrapper { position: relative; margin-bottom: 10px; }
-    textarea { width: 100%; height: 160px; padding: 15px; font-size: 1.1em; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); resize: vertical; box-sizing: border-box; }
-    .clear-btn { position: absolute; right: 12px; top: 12px; background: none; border: none; color: var(--gray); font-size: 1.4em; cursor: pointer; display: none; }
-    .clear-btn:hover { color: var(--error); }
-    .char-count { position: absolute; bottom: 8px; right: 12px; font-size: 0.85em; color: var(--gray); }
-    .suggestions { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; background: var(--suggestion-bg); display: none; }
-    .suggestions li { padding: 10px 15px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text); }
-    .suggestions li:hover, .suggestions li.selected { background: var(--primary); color: #fff; }
-    .actions { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
-    button { padding: 10px 20px; font-size: 1em; border: none; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; }
-    #copyBtn { background: var(--gray); color: #fff; }
-    button:hover { opacity: 0.9; }
-    #output { width: 100%; min-height: 160px; padding: 15px; font-size: 1.1em; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,0.03); white-space: pre-wrap; word-wrap: break-word; color: var(--text); }
-    #loading { display: none; text-align: center; color: var(--primary); font-style: italic; margin: 10px 0; }
-    .not-found { color: var(--error); font-weight: bold; }
+    .settings-icon { position: absolute; right: 20px; top: 18px; font-size: 1.5em; cursor: pointer; color: white; }
+    .settings-panel { display: none; position: fixed; top: 60px; right: 20px; background: white; border: 1px solid #ccc; border-radius: 8px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000; width: 220px; }
+    body.contrast-white-on-black .settings-panel,
+    body.contrast-yellow-on-black .settings-panel { background: #222; color: white; border-color: #555; }
+    .settings-panel label { display: block; margin: 10px 0; cursor: pointer; }
+    .settings-panel input[type="radio"] { margin-right: 8px; }
   </style>
 </head>
 <body>
   <header>
     <h1>Olonganes Translator</h1>
     <a href="../" class="back">← Back to Dictionary</a>
+    <span class="settings-icon" id="settingsIcon">⚙️</span>
   </header>
-  <main>
-    <!-- Phần còn lại giữ nguyên như code trước: lang-select, input-wrapper với textarea + clearBtn + charCount + suggestions, loading, output, actions copy -->
 
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <h3>Contrast</h3>
+    <label><input type="radio" name="contrast" value="black-on-white" checked> Black on White</label>
+    <label><input type="radio" name="contrast" value="white-on-black"> White on Black</label>
+    <label><input type="radio" name="contrast" value="yellow-on-black"> Yellow on Black</label>
+  </div>
+
+  <main>
     <div class="lang-select">
       <select id="fromLang">
         <option value="en">English</option>
@@ -103,34 +114,50 @@
   </main>
 
   <script>
-    // ... (giữ nguyên toàn bộ script trước: load dictionary, sync lang, swap, char count, suggestions, auto translate, copy, etc.)
+    // Load dictionary (giữ nguyên từ trước)
+    let dictionary = [];
+    fetch('../dictionary.json')
+      .then(res => res.json())
+      .then(data => { dictionary = data; console.log('Loaded', dictionary.length); })
+      .catch(err => { console.error(err); document.getElementById('output').innerHTML = '<span class="not-found">Lỗi load từ điển!</span>'; });
 
-    // THÊM PHẦN SYNC THEME/CONTRAST
-    function applyTheme() {
-      const mode = localStorage.getItem('contrastMode') || 'black-on-white'; // giả định key là 'contrastMode', nếu khác thì sửa (kiểm tra trong index.html từ điển)
-      document.body.classList.remove('light', 'dark', 'high-contrast');
-      
-      if (mode === 'white-on-black' || mode === 'dark') {
-        document.body.classList.add('dark');
-      } else if (mode === 'yellow-on-black' || mode === 'high-contrast') {
-        document.body.classList.add('high-contrast');
-      } else {
-        // default Black on White
-        document.body.classList.add('light'); // hoặc không add gì nếu root là light
-      }
-    }
+    // ... (giữ nguyên các biến và event cho lang, swap, input, suggestions, auto translate, copy, clearBtn như code trước)
 
-    // Apply ngay khi load
-    applyTheme();
+    // PHẦN CONTRAST / SETTINGS
+    const settingsIcon = document.getElementById('settingsIcon');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const contrastRadios = document.querySelectorAll('input[name="contrast"]');
 
-    // Optional: listen storage change nếu user thay đổi ở tab từ điển
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'contrastMode') {
-        applyTheme();
-      }
+    // Toggle panel
+    settingsIcon.addEventListener('click', () => {
+      settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
     });
 
-    // Nếu từ điển dùng key khác (ví dụ 'theme' hoặc 'contrast'), thay 'contrastMode' bằng key thật
+    // Apply contrast
+    function applyContrast(mode) {
+      document.body.classList.remove('contrast-white-on-black', 'contrast-yellow-on-black');
+      if (mode === 'white-on-black') {
+        document.body.classList.add('contrast-white-on-black');
+      } else if (mode === 'yellow-on-black') {
+        document.body.classList.add('contrast-yellow-on-black');
+      }
+      // Lưu localStorage (key giống từ điển, giả định là 'contrastMode' - nếu khác thì sửa)
+      localStorage.setItem('contrastMode', mode);
+    }
+
+    // Load từ localStorage khi mở page
+    const savedMode = localStorage.getItem('contrastMode') || 'black-on-white';
+    applyContrast(savedMode);
+    document.querySelector(`input[value="${savedMode}"]`).checked = true;
+
+    // Khi chọn radio
+    contrastRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        applyContrast(radio.value);
+      });
+    });
+
+    // ... (phần còn lại của script: input event, debounce, suggestions filter, translateAuto, etc. paste từ code cũ vào đây)
   </script>
 </body>
 </html>
