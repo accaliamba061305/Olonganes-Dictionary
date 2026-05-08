@@ -279,26 +279,34 @@
     "part_of_speech": "n",
     "definition": "An extremely wicked or cruel act, typically one involving physical violence or injury."
   },
-  {
+    {
     "english": "fertility",
     "olonganes": "dakrapamamiy",
     "part_of_speech": "n",
     "definition": "The quality of being fertile; the ability to conceive children or young; or the productiveness of soil."
   },
   {
-  "Dovolores": {
+    "english": "independence",
+    "olonganes": "Dovolores",
+    "part_of_speech": "n",
     "definition": "Sự độc lập hiển nhiên và sự tự do của một tập thể, nhóm, quốc gia; quyền con người hiển nhiên và mưu cầu hạnh phúc."
   },
-  "Maternites": {
+  {
+    "english": "equality",
+    "olonganes": "Maternites",
+    "part_of_speech": "n",
     "definition": "Sự bình đẳng hiển nhiên của mỗi cá nhân; sự công bằng (mang nghĩa luật pháp và liên quan đến tổ chức, quốc gia) và quyền quyết định chính mình của mỗi cá nhân.",
     "context_note": "Liên quan đến sự tương đồng với từ 'maternity' (mẫu tử/tình mẹ)."
   },
-  "Sovoizdenion": {
+  {
+    "english": "solidarity",
+    "olonganes": "Sovoizdenion",
+    "part_of_speech": "n",
+    "definition": "Sự đoàn kết hướng đến sự phát triển bền vững vì mục tiêu chung (phái sinh từ gốc động từ Sovoiz).",
     "etymology": {
       "root_verb": "Sovoiz",
       "root_meaning": "Sự đoàn kết hướng đến sự phát triển bền vững vì mục tiêu chung."
-    },
-    "definition": "Sự đoàn kết hướng đến sự phát triển bền vững vì mục tiêu chung (phái sinh từ gốc động từ Sovoiz)."
-  }
+    }
+
 
   }
