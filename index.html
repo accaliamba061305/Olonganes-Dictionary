@@ -2,7 +2,6 @@
 <html lang="en">
   <link href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUWtN9IfP-M_ThHG6RoX3E3LVNZ0g8wBsfpg&s" rel="icon"/>
 <head>
-  <!-- Ví dụ thêm vào header, cạnh settings hoặc dưới logo -->
 <a href="translate/" style="margin-left: 15px; padding: 8px 16px; background: #2196F3; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Translate →</a>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,7 +85,6 @@
 
     <div id="result"></div>
 
-    <!-- Settings Panel -->
     <div id="settingsPanel" class="panel">
       <h2>Settings</h2>
       <h3>Contrast Mode</h3>
@@ -101,7 +99,6 @@
       <button onclick="toggleSettings()">Close</button>
     </div>
 
-    <!-- History Panel -->
     <div id="historyPanel" class="panel">
       <h3>Recent Searches</h3>
       <div id="historyList"></div>
@@ -111,7 +108,6 @@
       <button onclick="toggleHistory()">Close</button>
     </div>
 
-    <!-- Bookmark Panel -->
     <div id="bookmarkPanel" class="panel">
       <h3>Bookmarks</h3>
       <div id="bookmarkList"></div>
@@ -121,7 +117,6 @@
       <button onclick="toggleBookmarks()">Close</button>
     </div>
 
-    <!-- Footer thống kê -->
     <footer id="statsFooter">
       Từ điển hiện có: <span id="totalWords">0</span> từ | Bookmark: <span id="bookmarkCount">0</span> từ | Từ hay tra nhất: <span id="mostSearched">Chưa có</span>
     </footer>
@@ -193,12 +188,19 @@
       return null;
     }
 
+    // ĐÃ SỬA: Hiển thị tiêu đề động theo hướng tra cứu
     function renderEntry(entry) {
+      const direction = document.getElementById('searchDirection')?.value || 'en-to-ol';
       const isBookmarked = bookmarks.some(b => b.english === entry.english);
+      
+      const mainWord = direction === 'en-to-ol' ? entry.english : entry.olonganes;
+      const targetWord = direction === 'en-to-ol' ? entry.olonganes : entry.english;
+      const targetLabel = direction === 'en-to-ol' ? 'Olonganes' : 'English';
+
       return `<div class="entry">
         <button class="bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${entry.english}')">★</button>
-        <h2>${entry.olonganes}</h2>
-        <p><b>English:</b> ${entry.english}</p>
+        <h2>${mainWord}</h2>
+        <p><b>${targetLabel}:</b> ${targetWord}</p>
         <p><b>Definition:</b> ${entry.definition}</p>
         <p><b>Synonyms:</b> ${entry.synonyms}</p>
         <p><b>Example:</b> ${entry.example}</p>
@@ -218,7 +220,8 @@
       if (found) {
         resultDiv.innerHTML = renderEntry(found.entry);
         if (!found.exact) {
-          resultDiv.innerHTML = `<p style="color: orange;">Did you mean: "${found.entry.english}"?</p>` + resultDiv.innerHTML;
+          const suggestKey = document.getElementById('searchDirection').value === 'en-to-ol' ? 'english' : 'olonganes';
+          resultDiv.innerHTML = `<p style="color: orange;">Did you mean: "${found.entry[suggestKey]}"?</p>` + resultDiv.innerHTML;
         }
         addToHistory(found.entry.english);
         updateStats();
@@ -278,6 +281,7 @@
       localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
     }
 
+    // ĐÃ SỬA: Tự chuyển hướng dropdown khi click vào Lịch sử
     function renderHistory() {
       const listDiv = document.getElementById('historyList');
       listDiv.innerHTML = '';
@@ -290,6 +294,11 @@
         item.className = 'history-item';
         item.textContent = word;
         item.onclick = () => {
+          const directionSelect = document.getElementById('searchDirection');
+          if (directionSelect) {
+            directionSelect.value = 'en-to-ol';
+            directionSelect.dispatchEvent(new Event('change'));
+          }
           document.getElementById('search').value = word;
           searchWord();
           toggleHistory();
@@ -329,6 +338,7 @@
       if (document.getElementById('bookmarkPanel').style.display === 'block') renderBookmarks();
     }
 
+    // ĐÃ SỬA: Tự chuyển hướng dropdown khi click vào Bookmark
     function renderBookmarks() {
       const listDiv = document.getElementById('bookmarkList');
       listDiv.innerHTML = '';
@@ -341,6 +351,11 @@
         item.className = 'bookmark-item';
         item.textContent = entry.english;
         item.onclick = () => {
+          const directionSelect = document.getElementById('searchDirection');
+          if (directionSelect) {
+            directionSelect.value = 'en-to-ol';
+            directionSelect.dispatchEvent(new Event('change'));
+          }
           document.getElementById('search').value = entry.english;
           searchWord();
           toggleBookmarks();
